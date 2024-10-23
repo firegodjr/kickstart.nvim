@@ -172,6 +172,19 @@ require('lazy').setup({
       },
     },
   },
+  {'romgrk/barbar.nvim',
+    dependencies = {
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+    },
+    init = function() vim.g.barbar_auto_setup = false end,
+    opts = {
+      sidebar_filetypes = {
+        ['neo-tree'] = true,
+      }
+    },
+    version = '^1.0.0', -- optional: only update when a new 1.x version is released
+  },
   {
       "nvim-neo-tree/neo-tree.nvim",
       branch = "v3.x",
@@ -180,7 +193,17 @@ require('lazy').setup({
         "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
         "MunifTanjim/nui.nvim",
         -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-      }
+      },
+    config = function()
+      require("neo-tree").setup({
+        filesystem = {
+          follow_current_file = {
+            enabled = true,
+            leave_dirs_open = false
+          }
+        }
+      })
+    end,
   },
   {
     "nvim-tree/nvim-tree.lua",
@@ -213,7 +236,7 @@ require('lazy').setup({
       end
 
       vim.keymap.set('n', '<C-c>', change_root_to_global_cwd, { desc = 'Change Root To Global CWD' })
-      vim.keymap.set('n', '<leader>tt', ':NvimTreeToggle<CR>', { desc = '[T]oggle [T]ree' })
+      vim.keymap.set('n', '<leader>tt', '<CMD>Neotree toggle<CR>', { desc = '[T]oggle [T]ree', silent = true, noremap = true })
     end,
   },
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -926,6 +949,36 @@ require('lazy').setup({
     },
   },
 })
+
+
+local map = vim.api.nvim_set_keymap
+local opts = { noremap = true, silent = true }
+
+-- Move to previous/next
+map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
+map('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
+-- Re-order to previous/next
+map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
+map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
+-- Goto buffer in position...
+map('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', opts)
+map('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', opts)
+map('n', '<A-3>', '<Cmd>BufferGoto 3<CR>', opts)
+map('n', '<A-4>', '<Cmd>BufferGoto 4<CR>', opts)
+map('n', '<A-5>', '<Cmd>BufferGoto 5<CR>', opts)
+map('n', '<A-6>', '<Cmd>BufferGoto 6<CR>', opts)
+map('n', '<A-7>', '<Cmd>BufferGoto 7<CR>', opts)
+map('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', opts)
+map('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', opts)
+map('n', '<A-0>', '<Cmd>BufferLast<CR>', opts)
+-- Pin/unpin buffer
+map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
+-- Goto pinned/unpinned buffer
+--                 :BufferGotoPinned
+--                 :BufferGotoUnpinned
+-- Close buffer
+map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
+
 
 -- Make things work on windows system provided clang exists
 if vim.loop.os_uname().sysname == 'Windows_NT' then
