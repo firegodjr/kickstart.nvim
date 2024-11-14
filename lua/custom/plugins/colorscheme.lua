@@ -1,7 +1,12 @@
 return {
-  "wnkz/monoglow.nvim",
-  priority = 1000, -- Make sure to load this before all the other start plugins.
-  init = function()
-  end
+  {'zenbones-theme/zenbones.nvim', dependencies='rktjmp/lush.nvim'},
+  {'Mofiqul/vscode.nvim'},
+  {'gmr458/vscode_modern_theme.nvim'},
+  {'slugbyte/lackluster.nvim'},
+  {'olivercederborg/poimandres.nvim'},
+  {'wnkz/monoglow.nvim'},
+  {'aliqyan-21/darkvoid.nvim'},
+  {'scottmckendry/cyberdream.nvim'},
+  {'AlexvZyl/nordic.nvim'},
 }
 

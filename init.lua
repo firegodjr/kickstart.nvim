@@ -871,7 +871,7 @@ require('lazy').setup({
   }
 })
 
-vim.cmd.colorscheme("monoglow-void")
+vim.cmd.colorscheme("vscode")
 
 local map = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
