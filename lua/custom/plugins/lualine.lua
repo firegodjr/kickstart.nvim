@@ -12,7 +12,7 @@ return {
     require('lualine').setup({
       options = {
         component_separators = { left = '', right = '' },
-        section_separators = { left = '', right = '' },
+        -- section_separators = { left = '', right = '' },
       },
       winbar = {
         lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
