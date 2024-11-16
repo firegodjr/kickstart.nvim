@@ -1,5 +1,6 @@
 return {
-  {'zenbones-theme/zenbones.nvim', dependencies='rktjmp/lush.nvim'},
+  {'loganswartz/sunburn.nvim', dependencies={'loganswartz/polychrome.nvim'}},
+  {'zenbones-theme/zenbones.nvim', dependencies={'rktjmp/lush.nvim'}},
   {'Mofiqul/vscode.nvim'},
   {'gmr458/vscode_modern_theme.nvim'},
   {'slugbyte/lackluster.nvim'},

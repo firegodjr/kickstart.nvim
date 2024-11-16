@@ -14,14 +14,14 @@ return {
         component_separators = { left = '', right = '' },
         -- section_separators = { left = '', right = '' },
       },
-      winbar = {
-        lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
-        lualine_y = { {'diff'} },
-        lualine_z = {'branch'},
-      },
-      inactive_winbar = {
-        lualine_a = {'filename'},
-      },
+      -- winbar = {
+      --   lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
+      --   lualine_y = { {'diff'} },
+      --   lualine_z = {'branch'},
+      -- },
+      -- inactive_winbar = {
+      --   lualine_a = {'filename'},
+      -- },
       sections = {
         lualine_a = { {'mode', icon=''} },
         lualine_b = { {} },
