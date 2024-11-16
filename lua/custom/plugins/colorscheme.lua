@@ -9,5 +9,9 @@ return {
   {'aliqyan-21/darkvoid.nvim'},
   {'scottmckendry/cyberdream.nvim'},
   {'AlexvZyl/nordic.nvim'},
+  {'rafamadriz/neon'},
+  {
+    url = 'https://github.com/firegodjr/monokai-pro.nvim.git',
+    priority = 1000, -- Make sure to load this before all the other start plugins.
+  }
 }
-
