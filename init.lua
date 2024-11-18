@@ -906,5 +906,10 @@ if vim.loop.os_uname().sysname == 'Windows_NT' then
   require('nvim-treesitter.install').compilers = { 'clang' }
 end
 
+-- Make things work in neovide if using neovide
+if vim.g.neovide then
+  require('neovide')
+end
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
