@@ -1,4 +1,7 @@
 return {
+  {"catppuccin/nvim", name = "catppuccin", priority = 1000},
+  {'morhetz/gruvbox'},
+  {'sainnhe/gruvbox-material'},
   {'loganswartz/sunburn.nvim', dependencies={'loganswartz/polychrome.nvim'}},
   {'zenbones-theme/zenbones.nvim', dependencies={'rktjmp/lush.nvim'}},
   {'Mofiqul/vscode.nvim'},
