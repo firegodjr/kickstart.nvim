@@ -738,6 +738,7 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          -- { name = 'codeium' },
         },
       }
     end,
@@ -906,6 +907,9 @@ map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
 -- Make things work on windows system provided clang exists
 if vim.loop.os_uname().sysname == 'Windows_NT' then
   require('nvim-treesitter.install').compilers = { 'clang' }
+  vim.cmd [[set shell=powershell]]
+  vim.cmd [[set shellcmdflag=-command]]
+  vim.cmd [[set shellxquote=]]
 end
 
 -- Make things work in neovide if using neovide
