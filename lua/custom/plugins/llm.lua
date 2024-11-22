@@ -12,14 +12,37 @@ return {
                 enable_cmp_source = false,
                 virtual_text = {
                     enabled = true,
-                    manual = true
+                    manual = true,
+                    idle_delay = 0,
+                    key_bindings = {
+                        accept = "<M-l>",
+                        accept_word = false,
+                        accept_line = false,
+                        clear = false,
+                        next = "<M-]>",
+                        prev = "<M-[>"
+                    }
                 }
             })
         end,
-        -- Start on vim enter
-        event = "VimEnter",
+        event = "BufEnter",
         keys = {
-            {'<F1>', function() require('codeium.virtual_text').complete() end, desc = 'Request AI completion', mode = 'i'},
+            {
+                '<M-i>',
+                function()
+                    vim.cmd('startinsert')
+                    vim.defer_fn(require('codeium.virtual_text').complete, 100)
+                end,
+                desc = 'Request AI completion'
+            },
+            {
+                '<M-i>',
+                function()
+                    require('codeium.virtual_text').complete()
+                end,
+                desc = 'Request AI completion',
+                mode = 'i'
+            },
         }
     },
 }
