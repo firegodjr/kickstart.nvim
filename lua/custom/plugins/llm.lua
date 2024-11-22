@@ -16,6 +16,8 @@ return {
                 }
             })
         end,
+        -- Start on vim enter
+        event = "VimEnter",
         keys = {
             {'<F1>', function() require('codeium.virtual_text').complete() end, desc = 'Request AI completion', mode = 'i'},
         }
