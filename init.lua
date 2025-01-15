@@ -871,7 +871,7 @@ require('lazy').setup({
   }
 })
 
-vim.cmd.colorscheme("catppuccin-macchiato")
+vim.cmd.colorscheme("catppuccin")
 vim.g.gruvbox_contrast_dark = 'hard'
 vim.g.gruvbox_material_foreground = 'original'
 
@@ -906,10 +906,7 @@ map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
 
 -- Make things work on windows system provided clang exists
 if vim.loop.os_uname().sysname == 'Windows_NT' then
-  require('nvim-treesitter.install').compilers = { 'clang' }
-  vim.cmd [[set shell=powershell]]
-  vim.cmd [[set shellcmdflag=-command]]
-  vim.cmd [[set shellxquote=]]
+  require('windows_init');
 end
 
 -- Make things work in neovide if using neovide
