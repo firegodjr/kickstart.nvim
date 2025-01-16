@@ -7,6 +7,7 @@ return {
     },
     init = function() vim.g.barbar_auto_setup = false end,
     opts = {
+      exclude_name = {'powershell.EXE'},
       sidebar_filetypes = {
         ['neo-tree'] = true,
       }
