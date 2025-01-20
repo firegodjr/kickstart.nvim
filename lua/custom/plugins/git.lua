@@ -20,5 +20,13 @@ return {
             { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" }
         },
     },
-    { "tpope/vim-fugitive" },
+    { 
+        "tpope/vim-fugitive",
+        event = "BufEnter",
+        keys = {
+            { '<leader>gs', '<cmd>G<cr>', desc = "[g]it [s]tatus" },
+            { '<leader>gc', '<cmd>G commit<cr>', desc = "[g]it [c]ommit" },
+            { '<leader>gb', '<cmd>G blame -w<cr>', desc = "[g]it [b]lame" },
+        }
+    },
 }
