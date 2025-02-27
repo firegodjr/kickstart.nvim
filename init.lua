@@ -905,6 +905,8 @@ local opts = { noremap = true, silent = true }
 -- -- Close buffer
 -- map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
 
+-- Set up volar correctly
+require('volar');
 
 -- Make things work on windows system provided clang exists
 if vim.loop.os_uname().sysname == 'Windows_NT' then
