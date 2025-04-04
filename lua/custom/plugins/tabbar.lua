@@ -16,6 +16,7 @@ return {
     },
     config = function()
       local theme = {
+        lualine_normal = 'lualine_a_normal',
         fill = 'TabLineFill',
         head = 'TabLine',
         current_tab = 'TabLineSel',
@@ -33,6 +34,10 @@ return {
           end
           local tabIcons = '󰋜󰅩󰯉';
           return {
+            {
+              { '  ', hl = theme.lualine_normal },
+              line.sep('', theme.lualine_normal, theme.fill),
+            },
             line.bufs().foreach(function(buf)
               local hl = buf.is_current() and theme.current_tab or theme.tab
               return {
