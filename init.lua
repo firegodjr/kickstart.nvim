@@ -77,6 +77,7 @@ vim.opt.scrolloff = 10
 
 -- Exit insert mode with jk
 vim.keymap.set('i', 'jk', '<Esc>')
+vim.keymap.set('i', 'kj', '<Esc>')
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
