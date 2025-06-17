@@ -17,6 +17,9 @@ return {
     -- Required dependency for nvim-dap-ui
     'nvim-neotest/nvim-nio',
 
+    -- Adds virtual text for variables
+    'theHamsta/nvim-dap-virtual-text',
+
     -- Installs the debug adapters for you
     'williamboman/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
@@ -30,12 +33,13 @@ return {
     return {
       -- Basic debugging keymaps, feel free to change to your liking!
       { '<F5>', dap.continue, desc = 'Debug: Start/Continue' },
-      { '<F1>', dap.step_into, desc = 'Debug: Step Into' },
-      { '<F2>', dap.step_over, desc = 'Debug: Step Over' },
-      { '<F3>', dap.step_out, desc = 'Debug: Step Out' },
-      { '<leader>b', dap.toggle_breakpoint, desc = 'Debug: Toggle Breakpoint' },
+      { '<F11>', dap.step_into, desc = 'Debug: Step Into' },
+      { '<F10>', dap.step_over, desc = 'Debug: Step Over' },
+      { '<F12>', dap.step_out, desc = 'Debug: Step Out' },
+      { '<leader>dq', dap.terminate, desc = 'Debug: Quit'},
+      { '<leader>db', dap.toggle_breakpoint, desc = 'Debug: Toggle Breakpoint' },
       {
-        '<leader>B',
+        '<leader>dB',
         function()
           dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
         end,
@@ -43,6 +47,20 @@ return {
       },
       -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
       { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
+      -- Add word under cursor to watches
+      { '<leader>de',
+        function()
+          dapui.elements.watches.add(vim.fn.expand('<cword>'))
+        end,
+        desc = 'Debug: Add word to watch' 
+      },
+      {
+        '<leader>dE',
+        function()
+          dapui.elements.watches.add(vim.fn.input 'Watch condition:')
+        end,
+        desc = 'Debug: Add watch condition',
+      },
       unpack(keys),
     }
   end,
@@ -101,5 +119,7 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
+
+    require('nvim-dap-virtual-text').setup()
   end,
 }
