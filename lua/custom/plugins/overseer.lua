@@ -3,9 +3,10 @@ wk.add({{ '<leader>o', group='[O]verseer' }});
 
 return {
   'stevearc/overseer.nvim',
+  event = 'VimEnter',
   keys = {
-    { '<leader>ol', '<cmd>OverseerToggle<cr>', desc = '[O]verseer [T]oggle' },
-    { '<leader>ot', '<cmd>OverseerRun<cr>', desc = '[O]verseer [R]un' }
+    { '<leader>ot', '<cmd>OverseerToggle<cr>', desc = '[O]verseer [T]oggle' },
+    { '<leader>or', '<cmd>OverseerRun<cr>', desc = '[O]verseer [R]un' }
   },
   config = function ()
     require('overseer').setup();
