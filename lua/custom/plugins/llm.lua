@@ -1,4 +1,15 @@
 return {
+    -- -- ollama code refactoring
+    -- { 
+    --     "David-Kunz/gen.nvim",
+    --     opts = {
+    --         model = "mistral",
+    --         show_prompt = true,
+    --         show_model = true,
+    --         display_mode = "split",
+    --     }
+    -- },
+    -- codeium code insertion
     {
         "Exafunction/codeium.nvim",
         dependencies = {
