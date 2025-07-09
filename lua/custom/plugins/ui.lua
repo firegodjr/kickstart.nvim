@@ -1,15 +1,15 @@
 vim.o.showtabline = 2;
 
 return {
-  -- shade inactive splits
-  {
-    -- Fork fixes issues with Mason install window
-    url="https://github.com/valentino-sm/shade.nvim.git",
-    opts = {
-      overlay_opacity = 75,
-      opacity_step = 1
-    }
-  },
+  -- -- shade inactive splits
+  -- {
+  --   -- Fork fixes issues with Mason install window
+  --   url="https://github.com/valentino-sm/shade.nvim.git",
+  --   opts = {
+  --     overlay_opacity = 75,
+  --     opacity_step = 1
+  --   }
+  -- },
 
   -- display marks next to line number
   {
