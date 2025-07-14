@@ -57,19 +57,41 @@ return {
         message_when_not_committed = "Noncommitted Changes",
       })
       vim.g.gitblame_display_virtual_text=0
+  
+      local dap_section = {
+        function()
+          local tasks = require("overseer").list_tasks();
+          local tasks_string = concat(tasks, " | ");
+          return require("dap").status()
+        end,
+        icon = { "", color = { fg = "#e7c664" } }, -- nerd icon.
+        cond = function()
+          if not package.loaded.dap then
+            return false
+          end
+          local session = require("dap").session()
+          return session ~= nil
+        end,
+      }
 
       require('lualine').setup({
         options = {
+          disabled_filetypes = {'dap-repl', 'dap-view'},
           component_separators = { left = '', right = '' },
           section_separators = { left = '', right = '' },
         },
-        -- winbar = {
-        --   lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
-        --   lualine_y = { {'diff'} },
-        --   lualine_z = {'branch'},
-        -- },
+        tabline = {
+          -- show branch and cwd
+          lualine_a = {{ icon = '', 'mode' }},
+          lualine_b = { { function() return vim.fn.getcwd() end }, dap_section },
+          lualine_c = { "overseer" },
+          -- lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
+          lualine_y = { {'diff'} },
+          lualine_z = { {'branch', icon='', draw_empty=true} }
+        },
         -- inactive_winbar = {
-        --   lualine_a = {'filename'},
+        --   lualine_c = { {'branch', icon='', draw_empty=true}},
+        --   lualine_x = { {'diff'} },
         -- },
         sections = {
           lualine_a = { {'mode', icon=''} },
@@ -91,81 +113,81 @@ return {
     end,
   },
 
-  -- tabline
-  {
-    'nanozuki/tabby.nvim',
-    event = 'VimEnter',
-    dependencies = { 'nvim-tree/nvim-web-devicons', 'uga-rosa/utf8.nvim' },
-    keys = {
-      { "<A-,>", "<cmd>bprev<cr>", { silent = true } },
-      { "<A-.>", "<cmd>bnext<cr>", { silent = true } },
-      { "<A-c>", "<cmd>bp|bd#<cr>", { silent = true } },
-      { "<A-x>", "<cmd>bp|bd!#<cr>", { silent = true } },
-      { "<A-<>", "<cmd>tabp<cr>", { silent = true } },
-      { "<A->>", "<cmd>tabn<cr>", { silent = true } },
-      { "<A-S-c>", "<cmd>tabclose<cr>", { silent = true } },
-    },
-    config = function()
-      local theme = {
-        lualine_normal = 'lualine_a_normal',
-        fill = 'TabLineFill',
-        head = 'TabLine',
-        current_tab = 'TabLineSel',
-        tab = 'TabLine',
-        win = 'TabLine',
-        tail = 'TabLine',
-      }
-      require('tabby').setup({
-        line = function(line)
-          local utf8 = require("utf8");
-          local function sub(s,i,j)
-                i=utf8.offset(s,i)
-                j=utf8.offset(s,j+1)-1
-                return string.sub(s,i,j)
-          end
-          local tabIcons = '󰋜󰅩󰯉';
-          return {
-            {
-              { '  ', hl = theme.lualine_normal },
-              line.sep('', theme.lualine_normal, theme.fill),
-            },
-            line.bufs().foreach(function(buf)
-              local hl = buf.is_current() and theme.current_tab or theme.tab
-              return {
-                line.sep('', hl, theme.fill),
-                buf.file_icon(),
-                buf.name(),
-                -- buf.id,
-                buf.is_changed() and '' or '',
-                line.sep('', hl, theme.fill),
-                hl = hl,
-                margin = ' ',
-            }
-            end),
-            line.spacer(),
-            line.tabs().foreach(function(tab)
-              local hl = tab.is_current() and theme.current_tab or theme.tab
-              return {
-                line.sep('', hl, theme.fill),
-                utf8.len(tabIcons) > tab.id and sub(tabIcons, tab.id, tab.id) or tab.id,
-                -- tab.name(),
-                #tab.wins().wins >= 1 and (#tab.wins().wins) or '',
-                -- tab.close_btn(''),
-                line.sep('', hl, theme.fill),
-                hl = hl,
-                margin = ' ',
-            }
-            end),
-          }
-        end,
-        option = {
-          buf_name = {
-            mode = 'tail'
-          }
-        }
-      });
-    end,
-  },
+  -- tabline (now owned by lualine)
+  -- {
+  --   'nanozuki/tabby.nvim',
+  --   event = 'VimEnter',
+  --   dependencies = { 'nvim-tree/nvim-web-devicons', 'uga-rosa/utf8.nvim' },
+  --   keys = {
+  --     { "<A-,>", "<cmd>bprev<cr>", { silent = true } },
+  --     { "<A-.>", "<cmd>bnext<cr>", { silent = true } },
+  --     { "<A-c>", "<cmd>bp|bd#<cr>", { silent = true } },
+  --     { "<A-x>", "<cmd>bp|bd!#<cr>", { silent = true } },
+  --     { "<A-<>", "<cmd>tabp<cr>", { silent = true } },
+  --     { "<A->>", "<cmd>tabn<cr>", { silent = true } },
+  --     { "<A-S-c>", "<cmd>tabclose<cr>", { silent = true } },
+  --   },
+  --   config = function()
+  --     local theme = {
+  --       lualine_normal = 'lualine_a_normal',
+  --       fill = 'TabLineFill',
+  --       head = 'TabLine',
+  --       current_tab = 'TabLineSel',
+  --       tab = 'TabLine',
+  --       win = 'TabLine',
+  --       tail = 'TabLine',
+  --     }
+  --     require('tabby').setup({
+  --       line = function(line)
+  --         local utf8 = require("utf8");
+  --         local function sub(s,i,j)
+  --               i=utf8.offset(s,i)
+  --               j=utf8.offset(s,j+1)-1
+  --               return string.sub(s,i,j)
+  --         end
+  --         local tabIcons = '󰋜󰅩󰯉';
+  --         return {
+  --           {
+  --             { '  ', hl = theme.lualine_normal },
+  --             line.sep('', theme.lualine_normal, theme.fill),
+  --           },
+  --           line.bufs().foreach(function(buf)
+  --             local hl = buf.is_current() and theme.current_tab or theme.tab
+  --             return {
+  --               line.sep('', hl, theme.fill),
+  --               buf.file_icon(),
+  --               buf.name(),
+  --               -- buf.id,
+  --               buf.is_changed() and '' or '',
+  --               line.sep('', hl, theme.fill),
+  --               hl = hl,
+  --               margin = ' ',
+  --           }
+  --           end),
+  --           line.spacer(),
+  --           line.tabs().foreach(function(tab)
+  --             local hl = tab.is_current() and theme.current_tab or theme.tab
+  --             return {
+  --               line.sep('', hl, theme.fill),
+  --               utf8.len(tabIcons) > tab.id and sub(tabIcons, tab.id, tab.id) or tab.id,
+  --               -- tab.name(),
+  --               #tab.wins().wins >= 1 and (#tab.wins().wins) or '',
+  --               -- tab.close_btn(''),
+  --               line.sep('', hl, theme.fill),
+  --               hl = hl,
+  --               margin = ' ',
+  --           }
+  --           end),
+  --         }
+  --       end,
+  --       option = {
+  --         buf_name = {
+  --           mode = 'tail'
+  --         }
+  --       }
+  --     });
+  --   end,
+  -- },
 
   -- tab-scoped buffers
   {
