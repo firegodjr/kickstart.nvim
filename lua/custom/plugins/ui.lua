@@ -60,8 +60,6 @@ return {
   
       local dap_section = {
         function()
-          local tasks = require("overseer").list_tasks();
-          local tasks_string = concat(tasks, " | ");
           return require("dap").status()
         end,
         icon = { "", color = { fg = "#e7c664" } }, -- nerd icon.
@@ -77,12 +75,12 @@ return {
       require('lualine').setup({
         options = {
           disabled_filetypes = {'dap-repl', 'dap-view'},
-          component_separators = { left = '', right = '' },
-          section_separators = { left = '', right = '' },
+          component_separators = { left = '', right = '' },
+          section_separators = { left = '', right = '' },
         },
         tabline = {
           -- show branch and cwd
-          lualine_a = {{ icon = '', 'mode' }},
+          -- lualine_a = {{ icon = '', 'mode' }},
           lualine_b = { { function() return vim.fn.getcwd() end }, dap_section },
           lualine_c = { "overseer" },
           -- lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
@@ -96,7 +94,7 @@ return {
         sections = {
           lualine_a = { {'mode', icon=''} },
           lualine_b = { {} },
-          lualine_c = { { 'filename', path=1 }, 'diagnostics'},
+          lualine_c = { { 'filename' }, 'diagnostics'},
           lualine_x = {'encoding', 'fileformat', 'filetype'},
           lualine_y = {'progress'},
           lualine_z = {'location'}

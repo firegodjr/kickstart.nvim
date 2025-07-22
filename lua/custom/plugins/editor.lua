@@ -1,4 +1,13 @@
 return {
+  -- Compile Less on save
+  {
+    "askfiy/neovim-easy-less",
+    ft = { "less" },
+    config = function()
+      require("easy-less").setup()
+    end
+  },
+  -- Refactoring
   {
     "ThePrimeagen/refactoring.nvim",
     dependencies = {

@@ -32,7 +32,7 @@ return {
     local dap = require 'dap'
     local dapui = require 'dap-view'
     return {
-      -- Basic debugging keymaps, feel free to change to your liking!
+      -- Basic debugging keymaps
       { '<F5>', dap.continue, desc = 'Debug: Start/Continue' },
       { 'dl', dap.step_into, desc = 'Debug: Step Into' },
       { 'dj', dap.step_over, desc = 'Debug: Step Over' },
@@ -47,6 +47,8 @@ return {
         end,
         desc = 'Debug: Set Breakpoint',
       },
+      -- Dap-View keymaps
+      { '<leader>dt', function () dapui.toggle(true) end, desc = 'Debug: Toggle UI'},
       -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
       { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
       -- Add word under cursor to watches
