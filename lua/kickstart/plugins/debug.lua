@@ -34,10 +34,10 @@ return {
     return {
       -- Basic debugging keymaps
       { '<F5>', dap.continue, desc = 'Debug: Start/Continue' },
-      { 'dl', dap.step_into, desc = 'Debug: Step Into' },
-      { 'dj', dap.step_over, desc = 'Debug: Step Over' },
-      { 'dh', dap.step_out, desc = 'Debug: Step Out' },
-      { 'dk', dap.step_out, desc = 'Debug: Step Out' },
+      { '<F11>', dap.step_into, desc = 'Debug: Step Into' },
+      { '<leader><F11>', dap.step_into, desc = 'Debug: Step Into' },
+      { '<F10>', dap.step_over, desc = 'Debug: Step Over' },
+      { '<F8>', dap.step_out, desc = 'Debug: Step Out' },
       { '<leader>dq', dap.terminate, desc = 'Debug: Quit'},
       { '<leader>db', dap.toggle_breakpoint, desc = 'Debug: Toggle Breakpoint' },
       {

@@ -20,6 +20,9 @@ return {
             { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" }
         },
     },
+    {
+        "rhysd/conflict-marker.vim"
+    },
     { 
         "tpope/vim-fugitive",
         event = "BufEnter",
