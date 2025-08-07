@@ -4,6 +4,7 @@
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+vim.opt.tabstop = 4;
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -787,6 +788,7 @@ require('lazy').setup({
         'query',
         'vim',
         'vimdoc',
+        'go',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -850,7 +852,8 @@ require('lazy').setup({
   }
 })
 
-vim.cmd.colorscheme("kanagawa-wave")
+vim.cmd.colorscheme("kanagawa-dragon")
+-- vim.cmd.colorscheme("monokai-pro-octagon")
 vim.g.gruvbox_contrast_dark = 'hard'
 vim.g.gruvbox_material_foreground = 'original'
 

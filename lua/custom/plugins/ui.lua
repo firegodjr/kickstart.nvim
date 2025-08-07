@@ -57,7 +57,7 @@ return {
         message_when_not_committed = "Noncommitted Changes",
       })
       vim.g.gitblame_display_virtual_text=0
-  
+
       local dap_section = {
         function()
           return require("dap").status()
@@ -76,7 +76,7 @@ return {
         options = {
           disabled_filetypes = {'dap-repl', 'dap-view'},
           component_separators = { left = '', right = '' },
-          section_separators = { left = '', right = '' },
+          section_separators = { left = '', right = '' },
         },
         tabline = {
           -- show branch and cwd
