@@ -1,3 +1,14 @@
+--[[
+Plugins in this file:
+- ray-x/go.nvim
+- ray-x/guihua.lua
+- neovim/nvim-lspconfig
+- nvim-treesitter/nvim-treesitter
+- askfiy/neovim-easy-less
+- ThePrimeagen/refactoring.nvim
+- nvim-lua/plenary.nvim
+]]
+
 return {
   {
     'ray-x/go.nvim',

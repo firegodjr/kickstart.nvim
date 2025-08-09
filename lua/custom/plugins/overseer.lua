@@ -1,3 +1,8 @@
+--[[
+Plugins in this file:
+- stevearc/overseer.nvim
+]]
+
 local wk = require 'which-key'
 wk.add { { '<leader>o', group = '[O]verseer' } }
 

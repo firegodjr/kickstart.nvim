@@ -1,3 +1,20 @@
+--[[
+Plugins in this file:
+- chentoast/marks.nvim
+- nvim-neo-tree/neo-tree.nvim
+- nvim-lualine/lualine.nvim
+- tiagovla/scope.nvim
+- rebelot/kanagawa.nvim
+- catppuccin/nvim
+- morhetz/gruvbox
+- sainnhe/gruvbox-material
+- Mofiqul/vscode.nvim
+- gmr458/vscode_modern_theme.nvim
+- AlexvZyl/nordic.nvim
+- rafamadriz/neon
+- firegodjr/monokai-pro.nvim
+]]
+
 vim.o.showtabline = 2
 
 return {
