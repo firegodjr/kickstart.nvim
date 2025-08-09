@@ -23,7 +23,7 @@ return {
         { '<leader><F11>', dap.step_into, desc = 'Debug: Step Into' },
         { '<F10>', dap.step_over, desc = 'Debug: Step Over' },
         { '<F8>', dap.step_out, desc = 'Debug: Step Out' },
-        { '<leader>dq', dap.terminate, desc = 'Debug: Quit'},
+        { '<leader>dq', dap.terminate, desc = 'Debug: Quit' },
         { '<leader>db', dap.toggle_breakpoint, desc = 'Debug: Toggle Breakpoint' },
         {
           '<leader>dB',
@@ -33,7 +33,13 @@ return {
           desc = 'Debug: Set Breakpoint',
         },
         -- Dap-View keymaps
-        { '<leader>dt', function () dapui.toggle(true) end, desc = 'Debug: Toggle UI'},
+        {
+          '<leader>dt',
+          function()
+            dapui.toggle(true)
+          end,
+          desc = 'Debug: Toggle UI',
+        },
         -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
         { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
         -- TODO: These are currently broken w/ nvim-dap-view
@@ -42,7 +48,7 @@ return {
         --   function()
         --     dapui.elements.watches.add(vim.fn.expand('<cword>'))
         --   end,
-        --   desc = 'Debug: Add word to watch' 
+        --   desc = 'Debug: Add word to watch'
         -- },
         -- {
         --   '<leader>dE',
@@ -62,9 +68,9 @@ return {
         type = 'server',
         port = '4711',
         executable = {
-          command = vim.fn.stdpath('data') .. '/mason/packages/netcoredbg/netcoredbg',
-          args = { '--interpreter=vscode' }
-        }
+          command = vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg',
+          args = { '--interpreter=vscode' },
+        },
       }
 
       require('mason-nvim-dap').setup {
@@ -86,7 +92,7 @@ return {
         ensure_installed = {
           -- Update this to ensure that you have the debuggers for the langs you want
           'netcoredbg',
-          'delve'
+          'delve',
         },
       }
 

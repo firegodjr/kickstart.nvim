@@ -1,4 +1,4 @@
-vim.o.showtabline = 2;
+vim.o.showtabline = 2
 
 return {
   -- -- shade inactive splits
@@ -13,36 +13,36 @@ return {
 
   -- display marks next to line number
   {
-    "chentoast/marks.nvim",
-    event = "VeryLazy",
+    'chentoast/marks.nvim',
+    event = 'VeryLazy',
     opts = {},
   },
 
   -- file tree
   {
-      "nvim-neo-tree/neo-tree.nvim",
-      branch = "v3.x",
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-        "MunifTanjim/nui.nvim",
-        -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-      },
-      keys = {
-        { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
-      },
-      opts = {
-        filesystem = {
-          window = {
-            mappings = {
-              ['\\'] = 'close_window',
-            },
-          },
-          follow_current_file = {
-            enabled = true,
-            leave_dirs_open = false,
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+      -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+    keys = {
+      { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    },
+    opts = {
+      filesystem = {
+        window = {
+          mappings = {
+            ['\\'] = 'close_window',
           },
         },
+        follow_current_file = {
+          enabled = true,
+          leave_dirs_open = false,
+        },
+      },
     },
   },
 
@@ -51,63 +51,67 @@ return {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons', 'f-person/git-blame.nvim' },
     config = function()
-      local git_blame = require('gitblame')
-      git_blame.setup({
-        message_template = "<sha>  <author>  <date>",
-        message_when_not_committed = "Noncommitted Changes",
-      })
-      vim.g.gitblame_display_virtual_text=0
+      local git_blame = require 'gitblame'
+      git_blame.setup {
+        message_template = '<sha>  <author>  <date>',
+        message_when_not_committed = 'Noncommitted Changes',
+      }
+      vim.g.gitblame_display_virtual_text = 0
 
       local dap_section = {
         function()
-          return require("dap").status()
+          return require('dap').status()
         end,
-        icon = { "", color = { fg = "#e7c664" } }, -- nerd icon.
+        icon = { '', color = { fg = '#e7c664' } }, -- nerd icon.
         cond = function()
           if not package.loaded.dap then
             return false
           end
-          local session = require("dap").session()
+          local session = require('dap').session()
           return session ~= nil
         end,
       }
 
-      require('lualine').setup({
+      require('lualine').setup {
         options = {
-          disabled_filetypes = {'dap-repl', 'dap-view'},
+          disabled_filetypes = { 'dap-repl', 'dap-view' },
           component_separators = { left = '', right = '' },
           section_separators = { left = '', right = '' },
         },
         tabline = {
           -- show branch and cwd
           -- lualine_a = {{ icon = '', 'mode' }},
-          lualine_b = { { function() return vim.fn.getcwd() end }, dap_section },
-          lualine_c = { "overseer" },
+          lualine_b = { {
+            function()
+              return vim.fn.getcwd()
+            end,
+          }, dap_section },
+          lualine_c = { 'overseer' },
           -- lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
-          lualine_y = { {'diff'} },
-          lualine_z = { {'branch', icon='', draw_empty=true} }
+          lualine_y = { { 'diff' } },
+          lualine_z = { { 'branch', icon = '', draw_empty = true } },
         },
         -- inactive_winbar = {
         --   lualine_c = { {'branch', icon='', draw_empty=true}},
         --   lualine_x = { {'diff'} },
         -- },
         sections = {
-          lualine_a = { {'mode', icon=''} },
+          lualine_a = { { 'mode', icon = '' } },
           lualine_b = { {} },
-          lualine_c = { { 'filename' }, 'diagnostics'},
-          lualine_x = {'encoding', 'fileformat', 'filetype'},
-          lualine_y = {'progress'},
-          lualine_z = {'location'}
+          lualine_c = { { 'filename' }, 'diagnostics' },
+          lualine_x = { 'encoding', 'fileformat', 'filetype' },
+          lualine_y = { 'progress' },
+          lualine_z = { 'location' },
         },
         inactive_sections = {
           lualine_a = {},
           lualine_b = {},
-          lualine_c = {'filename'},
-          lualine_x = {'location'},
+          lualine_c = { 'filename' },
+          lualine_x = { 'location' },
           lualine_y = {},
-          lualine_z = {}
+          lualine_z = {},
         },
-      })
+      }
     end,
   },
 
@@ -191,25 +195,23 @@ return {
   {
     'tiagovla/scope.nvim',
     config = function()
-      require('scope').setup({
-        
-      });
+      require('scope').setup {}
     end,
   },
 
   -- cool colorschemes --
-  {'rebelot/kanagawa.nvim'},
-  {"catppuccin/nvim", name = "catppuccin", priority = 1000},
-  {'morhetz/gruvbox'},
-  {'sainnhe/gruvbox-material'},
-  {'Mofiqul/vscode.nvim'},
-  {'gmr458/vscode_modern_theme.nvim'},
-  {'AlexvZyl/nordic.nvim'},
-  {'rafamadriz/neon'},
+  { 'rebelot/kanagawa.nvim' },
+  { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
+  { 'morhetz/gruvbox' },
+  { 'sainnhe/gruvbox-material' },
+  { 'Mofiqul/vscode.nvim' },
+  { 'gmr458/vscode_modern_theme.nvim' },
+  { 'AlexvZyl/nordic.nvim' },
+  { 'rafamadriz/neon' },
   {
     url = 'https://github.com/firegodjr/monokai-pro.nvim.git',
     priority = 1000, -- Make sure to load this before all the other start plugins.
-  }
+  },
 }
 -- return {
 --     'romgrk/barbar.nvim',
