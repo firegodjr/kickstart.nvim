@@ -9,6 +9,9 @@ vim.opt.tabstop = 4
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- Load per-project config if exists
+vim.opt.exrc = true
+
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!

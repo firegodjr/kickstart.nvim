@@ -14,7 +14,6 @@ Plugins in this file:
 - nvim-treesitter/nvim-treesitter
 ]]
 
--- Consolidate all plugins into lua/plugins
 return {
   { -- Show pending keybinds
     'folke/which-key.nvim',
@@ -68,8 +67,10 @@ return {
       },
     },
   },
-
-
+  {
+    'jedrzejboczar/exrc.nvim',
+    dependencies = { 'neovim/nvim-lspconfig' },
+  },
   'tpope/vim-sleuth',
   { -- Git signs in the gutter
     'lewis6991/gitsigns.nvim',
