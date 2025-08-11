@@ -214,16 +214,16 @@ local opts = { noremap = true, silent = true }
 -- map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
 
 -- Set up volar correctly
-require 'volar'
+require 'compat.volar'
 
 -- Make things work on windows system provided clang exists
 if vim.loop.os_uname().sysname == 'Windows_NT' then
-  require 'windows_init'
+  require 'compat.windows'
 end
 
 -- Make things work in neovide if using neovide
 if vim.g.neovide then
-  require 'neovide'
+  require 'compat.neovide'
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
