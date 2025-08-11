@@ -1,6 +1,5 @@
 -- Set <space> as the leader key
 -- See `:help mapleader`
---
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -179,6 +178,16 @@ end
 if vim.g.neovide then
   require 'compat.neovide'
 end
+
+-- Things that depend on a .nvim.lua file to set a global flag are loaded here
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    -- Load KL plugin if enabled, after exrc is loaded
+    if vim.g.use_kl then
+      require 'compat.kl'
+    end
+  end,
+})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
