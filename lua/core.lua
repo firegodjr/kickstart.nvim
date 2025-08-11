@@ -14,9 +14,11 @@ Plugins in this file:
 - nvim-treesitter/nvim-treesitter
 ]]
 
+-- Consolidate all plugins into lua/plugins
 return {
-  'tpope/vim-sleuth',
+  { import = 'plugins' },
 
+  'tpope/vim-sleuth',
   { -- Git signs in the gutter
     'lewis6991/gitsigns.nvim',
     opts = {
