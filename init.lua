@@ -11,6 +11,8 @@ vim.g.have_nerd_font = true
 -- Load per-project config if exists
 vim.opt.exrc = true
 
+vim.opt.conceallevel = 1
+
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!

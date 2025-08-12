@@ -70,6 +70,7 @@ return {
   {
     'jedrzejboczar/exrc.nvim',
     dependencies = { 'neovim/nvim-lspconfig' },
+    config = true,
   },
   'tpope/vim-sleuth',
   { -- Git signs in the gutter
