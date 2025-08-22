@@ -11,7 +11,7 @@ vim.g.have_nerd_font = true
 -- Load per-project config if exists
 vim.opt.exrc = true
 
-vim.opt.conceallevel = 1
+vim.opt.conceallevel = 0
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -125,6 +125,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
     vim.highlight.on_yank()
   end,
+})
+
+-- Enable word wrap for markdown
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'markdown',
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+  end,
+  desc = 'Enable word wrap for markdown files'
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]

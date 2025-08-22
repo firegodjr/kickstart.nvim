@@ -16,6 +16,7 @@ Plugins in this file:
 ]]
 
 vim.o.showtabline = 2
+vim.opt.background = 'dark'
 
 return {
   -- -- shade inactive splits
@@ -63,6 +64,24 @@ return {
     },
   },
 
+  -- toggleterm
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      local toggleterm = require 'toggleterm'
+      toggleterm.setup()
+      local Terminal = require('toggleterm.terminal').Terminal
+
+      -- scooter
+      local scooter = Terminal:new { cmd = 'scooter', hidden = true, direction = 'float', size = 40 }
+      function _scooter_toggle()
+        scooter:toggle()
+      end
+      vim.keymap.set('n', '<leader>sS', _scooter_toggle, { noremap = true, silent = true, desc = '[S]earch [S]cooter' })
+    end,
+  },
+
   -- statusline
   {
     'nvim-lualine/lualine.nvim',
@@ -98,7 +117,8 @@ return {
         tabline = {
           -- show branch and cwd
           -- lualine_a = {{ icon = '', 'mode' }},
-          lualine_b = { {
+          lualine_a = { {
+            icon = '',
             function()
               return vim.fn.getcwd()
             end,
@@ -217,6 +237,8 @@ return {
   },
 
   -- cool colorschemes --
+  { 'nyoom-engineering/oxocarbon.nvim' },
+  { 'EdenEast/nightfox.nvim' },
   { 'rebelot/kanagawa.nvim' },
   { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
   { 'morhetz/gruvbox' },
