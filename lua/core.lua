@@ -27,7 +27,6 @@ return {
         { '<leader>s', group = '[S]earch' },
         { '<leader>g', group = '[G]it' },
         { '<leader>w', group = '[W]orkspace' },
-        { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       }
     end,
@@ -98,7 +97,6 @@ return {
         { '<leader>s', group = '[S]earch' },
         { '<leader>g', group = '[G]it' },
         { '<leader>w', group = '[W]orkspace' },
-        { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       }
     end,
@@ -240,12 +238,12 @@ return {
             map('gd', require('omnisharp_extended').telescope_lsp_definition, '[G]oto [D]efinition')
             map('gr', require('omnisharp_extended').telescope_lsp_references, '[G]oto [R]eferences')
             map('gI', require('omnisharp_extended').telescope_lsp_implementation, '[G]oto [I]mplementation')
-            map('<leader>D', require('omnisharp_extended').telescope_lsp_type_definition, 'Type [D]efinition')
+            map('gD', require('omnisharp_extended').telescope_lsp_type_definition, 'Type [D]efinition')
           else
             map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
             map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
             map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-            map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+            map('gD', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
           end
 
           map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')

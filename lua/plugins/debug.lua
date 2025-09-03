@@ -64,13 +64,23 @@ return {
       local dap = require 'dap'
       local dapui = require 'dap-view'
 
-      dap.adapters.netcoredbg = {
-        type = 'server',
-        port = '4711',
-        executable = {
-          command = vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg',
-          args = { '--interpreter=vscode' },
-        },
+      -- dap.adapters.netcoredbg = {
+      --   type = 'server',
+      --   port = '4711',
+      --   executable = {
+      --     command = vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg',
+      --     args = { '--interpreter=vscode' },
+      --   },
+      -- }
+
+      dap.configurations.cs = {
+        {
+          name = 'Attach to Running Process',
+          type = 'coreclr',
+          request = 'attach',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}'
+        }
       }
 
       require('mason-nvim-dap').setup {

@@ -28,7 +28,6 @@ return {
   --     opacity_step = 1
   --   }
   -- },
-
   -- display marks next to line number
   {
     'chentoast/marks.nvim',
