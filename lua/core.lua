@@ -166,6 +166,26 @@ return {
             },
           },
         },
+        defaults = {
+          path_display = { 'smart' },
+          mappings = {
+            i = {
+              ['<c-h>'] = 'which_key'
+            }
+          },
+        },
+        pickers = {
+          buffers = {
+            mappings = {
+              n = {
+                ['<c-d>'] = require('telescope.actions').delete_buffer
+              },
+              i = {
+                ['<c-d>'] = require('telescope.actions').delete_buffer
+              }
+            }
+          }
+        }
       }
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
