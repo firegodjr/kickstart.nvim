@@ -61,7 +61,9 @@ return {
     'askfiy/neovim-easy-less',
     ft = { 'less' },
     config = function()
-      require('easy-less').setup()
+      require('easy-less').setup {
+        generate_suffix = 'min.css',
+      }
     end,
   },
   -- Refactoring

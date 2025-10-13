@@ -1,20 +1,3 @@
---[[
-Plugins in this file:
-- chentoast/marks.nvim
-- nvim-neo-tree/neo-tree.nvim
-- nvim-lualine/lualine.nvim
-- tiagovla/scope.nvim
-- rebelot/kanagawa.nvim
-- catppuccin/nvim
-- morhetz/gruvbox
-- sainnhe/gruvbox-material
-- Mofiqul/vscode.nvim
-- gmr458/vscode_modern_theme.nvim
-- AlexvZyl/nordic.nvim
-- rafamadriz/neon
-- firegodjr/monokai-pro.nvim
-]]
-
 vim.o.showtabline = 2
 vim.opt.background = 'dark'
 
@@ -97,7 +80,7 @@ return {
         function()
           return require('dap').status()
         end,
-        icon = { '', color = { fg = '#e7c664' } }, -- nerd icon.
+        icon = { '', color = { fg = '#e7c664' } },
         cond = function()
           if not package.loaded.dap then
             return false
@@ -121,8 +104,11 @@ return {
             function()
               return vim.fn.getcwd()
             end,
-          }, dap_section },
-          lualine_c = { 'overseer' },
+          }},
+          lualine_b = {
+            'tabs',
+          },
+          lualine_c = { 'overseer', dap_section  },
           -- lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
           lualine_y = { { 'diff' } },
           lualine_z = { { 'branch', icon = '', draw_empty = true } },
