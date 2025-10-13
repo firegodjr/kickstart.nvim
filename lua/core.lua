@@ -1,19 +1,3 @@
---[[
-Plugins in this file:
-- tpope/vim-sleuth
-- lewis6991/gitsigns.nvim
-- folke/which-key.nvim
-- nvim-telescope/telescope.nvim
-- folke/lazydev.nvim
-- Bilal2453/luvit-meta
-- neovim/nvim-lspconfig
-- stevearc/conform.nvim
-- hrsh7th/nvim-cmp
-- folke/todo-comments.nvim
-- echasnovski/mini.nvim
-- nvim-treesitter/nvim-treesitter
-]]
-
 return {
   { -- Show pending keybinds
     'folke/which-key.nvim',
@@ -170,22 +154,22 @@ return {
           path_display = { 'smart' },
           mappings = {
             i = {
-              ['<c-h>'] = 'which_key'
-            }
+              ['<c-h>'] = 'which_key',
+            },
           },
         },
         pickers = {
           buffers = {
             mappings = {
               n = {
-                ['<c-d>'] = require('telescope.actions').delete_buffer
+                ['<c-d>'] = require('telescope.actions').delete_buffer,
               },
               i = {
-                ['<c-d>'] = require('telescope.actions').delete_buffer
-              }
-            }
-          }
-        }
+                ['<c-d>'] = require('telescope.actions').delete_buffer,
+              },
+            },
+          },
+        },
       }
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')

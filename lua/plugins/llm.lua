@@ -1,15 +1,3 @@
---[[
-Plugins in this file:
-- firegodjr/nvim-aider
-- Exafunction/codeium.nvim
-- folke/snacks.nvim
-- catppuccin/nvim
-- nvim-neo-tree/neo-tree.nvim
-- nvim-lua/plenary.nvim
-- hrsh7th/nvim-cmp
-- nvim-lualine/lualine.nvim
-]]
-
 local wk = require 'which-key'
 wk.add { { '<leader>n', group = 'Ge[n] (Ollama)' } }
 --

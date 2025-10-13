@@ -1,8 +1,3 @@
---[[
-Plugins in this file:
-- eandrju/cellular-automaton.nvim
-]]
-
 local wk = require 'which-key'
 wk.add { { '<leader>f', hidden = true } }
 

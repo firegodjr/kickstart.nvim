@@ -1,11 +1,3 @@
---[[
-Plugins in this file:
-- kdheepak/lazygit.nvim
-- nvim-lua/plenary.nvim
-- rhysd/conflict-marker.vim
-- tpope/vim-fugitive
-]]
-
 return {
   {
     'kdheepak/lazygit.nvim',
