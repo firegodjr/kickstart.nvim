@@ -12,6 +12,20 @@ end
 
 
 return {
+  -- claude code (if available)
+  {
+    "greggh/claude-code.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+      -- don't set up if 'claude' command doesn't exist
+      if vim.fn.executable("claude") == 0 then
+        return
+      end
+      require("claude-code").setup()
+    end,
+  },
   -- codeium code insertion
   {
     -- Custom fork fixes issue w/ spaces
