@@ -1,33 +1,7 @@
---[[
-Plugins in this file:
-- chentoast/marks.nvim
-- nvim-neo-tree/neo-tree.nvim
-- nvim-lualine/lualine.nvim
-- tiagovla/scope.nvim
-- rebelot/kanagawa.nvim
-- catppuccin/nvim
-- morhetz/gruvbox
-- sainnhe/gruvbox-material
-- Mofiqul/vscode.nvim
-- gmr458/vscode_modern_theme.nvim
-- AlexvZyl/nordic.nvim
-- rafamadriz/neon
-- firegodjr/monokai-pro.nvim
-]]
-
 vim.o.showtabline = 2
+vim.opt.background = 'dark'
 
 return {
-  -- -- shade inactive splits
-  -- {
-  --   -- Fork fixes issues with Mason install window
-  --   url="https://github.com/valentino-sm/shade.nvim.git",
-  --   opts = {
-  --     overlay_opacity = 75,
-  --     opacity_step = 1
-  --   }
-  -- },
-
   -- display marks next to line number
   {
     'chentoast/marks.nvim',
@@ -63,6 +37,24 @@ return {
     },
   },
 
+  -- toggleterm
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      local toggleterm = require 'toggleterm'
+      toggleterm.setup()
+      local Terminal = require('toggleterm.terminal').Terminal
+
+      -- scooter
+      local scooter = Terminal:new { cmd = 'scooter', hidden = true, direction = 'float', size = 40 }
+      local function scooter_toggle()
+        scooter:toggle()
+      end
+      vim.keymap.set('n', '<leader>sS', scooter_toggle, { noremap = true, silent = true, desc = '[S]earch [S]cooter' })
+    end,
+  },
+
   -- statusline
   {
     'nvim-lualine/lualine.nvim',
@@ -79,7 +71,7 @@ return {
         function()
           return require('dap').status()
         end,
-        icon = { '', color = { fg = '#e7c664' } }, -- nerd icon.
+        icon = { '', color = { fg = '#e7c664' } },
         cond = function()
           if not package.loaded.dap then
             return false
@@ -98,12 +90,16 @@ return {
         tabline = {
           -- show branch and cwd
           -- lualine_a = {{ icon = '', 'mode' }},
-          lualine_b = { {
+          lualine_a = { {
+            icon = '',
             function()
               return vim.fn.getcwd()
             end,
-          }, dap_section },
-          lualine_c = { 'overseer' },
+          }},
+          lualine_b = {
+            'tabs',
+          },
+          lualine_c = { 'overseer', dap_section  },
           -- lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
           lualine_y = { { 'diff' } },
           lualine_z = { { 'branch', icon = '', draw_empty = true } },
@@ -132,82 +128,6 @@ return {
     end,
   },
 
-  -- tabline (now owned by lualine)
-  -- {
-  --   'nanozuki/tabby.nvim',
-  --   event = 'VimEnter',
-  --   dependencies = { 'nvim-tree/nvim-web-devicons', 'uga-rosa/utf8.nvim' },
-  --   keys = {
-  --     { "<A-,>", "<cmd>bprev<cr>", { silent = true } },
-  --     { "<A-.>", "<cmd>bnext<cr>", { silent = true } },
-  --     { "<A-c>", "<cmd>bp|bd#<cr>", { silent = true } },
-  --     { "<A-x>", "<cmd>bp|bd!#<cr>", { silent = true } },
-  --     { "<A-<>", "<cmd>tabp<cr>", { silent = true } },
-  --     { "<A->>", "<cmd>tabn<cr>", { silent = true } },
-  --     { "<A-S-c>", "<cmd>tabclose<cr>", { silent = true } },
-  --   },
-  --   config = function()
-  --     local theme = {
-  --       lualine_normal = 'lualine_a_normal',
-  --       fill = 'TabLineFill',
-  --       head = 'TabLine',
-  --       current_tab = 'TabLineSel',
-  --       tab = 'TabLine',
-  --       win = 'TabLine',
-  --       tail = 'TabLine',
-  --     }
-  --     require('tabby').setup({
-  --       line = function(line)
-  --         local utf8 = require("utf8");
-  --         local function sub(s,i,j)
-  --               i=utf8.offset(s,i)
-  --               j=utf8.offset(s,j+1)-1
-  --               return string.sub(s,i,j)
-  --         end
-  --         local tabIcons = '󰋜󰅩󰯉';
-  --         return {
-  --           {
-  --             { '  ', hl = theme.lualine_normal },
-  --             line.sep('', theme.lualine_normal, theme.fill),
-  --           },
-  --           line.bufs().foreach(function(buf)
-  --             local hl = buf.is_current() and theme.current_tab or theme.tab
-  --             return {
-  --               line.sep('', hl, theme.fill),
-  --               buf.file_icon(),
-  --               buf.name(),
-  --               -- buf.id,
-  --               buf.is_changed() and '' or '',
-  --               line.sep('', hl, theme.fill),
-  --               hl = hl,
-  --               margin = ' ',
-  --           }
-  --           end),
-  --           line.spacer(),
-  --           line.tabs().foreach(function(tab)
-  --             local hl = tab.is_current() and theme.current_tab or theme.tab
-  --             return {
-  --               line.sep('', hl, theme.fill),
-  --               utf8.len(tabIcons) > tab.id and sub(tabIcons, tab.id, tab.id) or tab.id,
-  --               -- tab.name(),
-  --               #tab.wins().wins >= 1 and (#tab.wins().wins) or '',
-  --               -- tab.close_btn(''),
-  --               line.sep('', hl, theme.fill),
-  --               hl = hl,
-  --               margin = ' ',
-  --           }
-  --           end),
-  --         }
-  --       end,
-  --       option = {
-  --         buf_name = {
-  --           mode = 'tail'
-  --         }
-  --       }
-  --     });
-  --   end,
-  -- },
-
   -- tab-scoped buffers
   {
     'tiagovla/scope.nvim',
@@ -217,6 +137,8 @@ return {
   },
 
   -- cool colorschemes --
+  { 'nyoom-engineering/oxocarbon.nvim' },
+  { 'EdenEast/nightfox.nvim' },
   { 'rebelot/kanagawa.nvim' },
   { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
   { 'morhetz/gruvbox' },
@@ -230,20 +152,3 @@ return {
     priority = 1000, -- Make sure to load this before all the other start plugins.
   },
 }
--- return {
---     'romgrk/barbar.nvim',
---     dependencies = {
---       'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
---       'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
---     },
---     init = function() vim.g.barbar_auto_setup = false end,
---     opts = {
---
---       exclude_name = {'powershell.EXE'},
---       maximum_length = 30,
---       sidebar_filetypes = {
---         ['neo-tree'] = true,
---       }
---     },
---     version = '^1.0.0', -- optional: only update when a new 1.x version is released
--- }

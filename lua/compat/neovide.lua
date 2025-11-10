@@ -4,9 +4,11 @@
 -- Set font manually b/c default size is very large
 vim.o.guifont = 'CaskaydiaCove Nerd Font:h11'
 
--- Disable shade b/c it blurs everything
-local shade = require 'shade'
-shade.toggle()
+-- Disable shade b/c it blurs everything (if it's loaded)
+local ok, shade = pcall(require, 'shade')
+if ok then
+  shade.toggle()
+end
 
 -- Animate when changing mode
 vim.g.neovide_cursor_vfx_mode = 'wireframe'

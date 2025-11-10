@@ -1,19 +1,17 @@
-local function getWorkspaces()
-  local workspaces = {}
-  -- Only add OneDrive workspace if path exists
-  -- Check for both Linux and Windows VMs
-  if (vim.fn.isdirectory('/media/sf_OneDrive_KnowledgeLake/Obsidian/') == 1) then
-    table.insert(workspaces, {
-      name = 'kl_onedrive',
-      path = '/media/sf_OneDrive_KnowledgeLake/Obsidian/',
-    })
-  elseif (vim.fn.isdirectory(vim.fn.expand('~/OneDrive - KnowledgeLake/Obsidian/') == 1)) then
-    table.insert(workspaces, {
-      name = 'kl_onedrive',
-      path = '~/OneDrive - KnowledgeLake/Obsidian/',
-    })
-  end
-  return workspaces;
+-- Check first if workspace exists
+local workspaces = {}
+
+if vim.fn.isdirectory('/media/sf_OneDrive_KnowledgeLake/Obsidian/') == 1 then
+  table.insert(workspaces, {
+    name = 'kl_onedrive_vm',
+    path = '/media/sf_OneDrive_KnowledgeLake/Obsidian/',
+  })
+end
+if vim.fn.isdirectory(vim.fn.expand('~/OneDrive - KnowledgeLake/Obsidian/')) == 1 then
+  table.insert(workspaces, {
+    name = 'kl_onedrive',
+    path = vim.fn.expand('~/OneDrive - KnowledgeLake/Obsidian/'),
+  })
 end
 
 return {
@@ -25,7 +23,7 @@ return {
   lazy = true,
   ft = 'markdown',
   opts = {
-    workspaces = getWorkspaces()
+    workspaces = workspaces,
   },
 }
 

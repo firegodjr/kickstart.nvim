@@ -11,7 +11,7 @@ vim.g.have_nerd_font = true
 -- Load per-project config if exists
 vim.opt.exrc = true
 
-vim.opt.conceallevel = 1
+vim.opt.conceallevel = 0
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -20,9 +20,6 @@ vim.opt.conceallevel = 1
 
 -- Make line numbers default
 vim.opt.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = false
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -52,7 +49,7 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = 'yes'
 
 -- Decrease update time
-vim.opt.updatetime = 250
+vim.opt.updatetime = 1000
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
@@ -125,6 +122,27 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
     vim.highlight.on_yank()
   end,
+})
+
+-- Enable word wrap for markdown
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'markdown',
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+  end,
+  desc = 'Enable word wrap for markdown files'
+})
+
+-- Enable codelens
+vim.api.nvim_create_autocmd('CursorHold', {
+  callback = function()
+    -- For some reason codelens keeps getting unset, might be theme-specific
+    -- So just force the highlight group to a neutral color for now
+    vim.api.nvim_set_hl(0, "LspCodeLens", { fg = "#777777", italic = true })
+    vim.lsp.codelens.refresh()
+  end,
+  desc = 'Enable codelens on CursorHold'
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]

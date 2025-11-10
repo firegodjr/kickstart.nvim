@@ -64,13 +64,14 @@ return {
       local dap = require 'dap'
       local dapui = require 'dap-view'
 
-      dap.adapters.netcoredbg = {
-        type = 'server',
-        port = '4711',
-        executable = {
-          command = vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg',
-          args = { '--interpreter=vscode' },
-        },
+      dap.configurations.cs = {
+        {
+          name = 'Attach to Running Process',
+          type = 'coreclr',
+          request = 'attach',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}'
+        }
       }
 
       require('mason-nvim-dap').setup {
@@ -103,24 +104,4 @@ return {
       require('nvim-dap-virtual-text').setup()
     end,
   },
-  -- nvim-neotest | Add support for running/debugging tests in neovim
-  -- {
-  --   "nvim-neotest/neotest",
-  --   dependencies = {
-  --     "nvim-neotest/nvim-nio",
-  --     "nvim-lua/plenary.nvim",
-  --     "antoinemadec/FixCursorHold.nvim",
-  --     "nvim-treesitter/nvim-treesitter",
-  --
-  --     -- dotnet adapter
-  --     "nsidorenco/neotest-vstest"
-  --   },
-  --   config = function ()
-  --     require("neotest").setup({
-  --       adapters = {
-  --         require("neotest-vstest")
-  --       }
-  --     })
-  --   end
-  -- }
 }

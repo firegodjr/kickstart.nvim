@@ -1,72 +1,4 @@
---[[
-Plugins in this file:
-- tpope/vim-sleuth
-- lewis6991/gitsigns.nvim
-- folke/which-key.nvim
-- nvim-telescope/telescope.nvim
-- folke/lazydev.nvim
-- Bilal2453/luvit-meta
-- neovim/nvim-lspconfig
-- stevearc/conform.nvim
-- hrsh7th/nvim-cmp
-- folke/todo-comments.nvim
-- echasnovski/mini.nvim
-- nvim-treesitter/nvim-treesitter
-]]
-
 return {
-  { -- Show pending keybinds
-    'folke/which-key.nvim',
-    event = 'VimEnter',
-    config = function(self, opts)
-      local wk = require 'which-key'
-      wk.add {
-        { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
-        { '<leader>d', group = '[D]ocument' },
-        { '<leader>r', group = '[R]ename' },
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>g', group = '[G]it' },
-        { '<leader>w', group = '[W]orkspace' },
-        { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
-      }
-    end,
-    opts = {
-      icons = {
-        mappings = vim.g.have_nerd_font,
-        keys = vim.g.have_nerd_font and {} or {
-          Up = '<Up> ',
-          Down = '<Down> ',
-          Left = '<Left> ',
-          Right = '<Right> ',
-          C = '<C-…> ',
-          M = '<M-…> ',
-          D = '<D-…> ',
-          S = '<S-…> ',
-          CR = '<CR> ',
-          Esc = '<Esc> ',
-          ScrollWheelDown = '<ScrollWheelDown> ',
-          ScrollWheelUp = '<ScrollWheelUp> ',
-          NL = '<NL> ',
-          BS = '<BS> ',
-          Space = '<Space> ',
-          Tab = '<Tab> ',
-          F1 = '<F1>',
-          F2 = '<F2>',
-          F3 = '<F3>',
-          F4 = '<F4>',
-          F5 = '<F5>',
-          F6 = '<F6>',
-          F7 = '<F7>',
-          F8 = '<F8>',
-          F9 = '<F9>',
-          F10 = '<F10>',
-          F11 = '<F11>',
-          F12 = '<F12>',
-        },
-      },
-    },
-  },
   {
     'jedrzejboczar/exrc.nvim',
     dependencies = { 'neovim/nvim-lspconfig' },
@@ -98,7 +30,6 @@ return {
         { '<leader>s', group = '[S]earch' },
         { '<leader>g', group = '[G]it' },
         { '<leader>w', group = '[W]orkspace' },
-        { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       }
     end,
@@ -165,6 +96,26 @@ return {
           themes = {
             persist = {
               enabled = true,
+            },
+          },
+        },
+        defaults = {
+          path_display = { 'smart' },
+          mappings = {
+            i = {
+              ['<c-h>'] = 'which_key',
+            },
+          },
+        },
+        pickers = {
+          buffers = {
+            mappings = {
+              n = {
+                ['<c-d>'] = require('telescope.actions').delete_buffer,
+              },
+              i = {
+                ['<c-d>'] = require('telescope.actions').delete_buffer,
+              },
             },
           },
         },
@@ -240,12 +191,12 @@ return {
             map('gd', require('omnisharp_extended').telescope_lsp_definition, '[G]oto [D]efinition')
             map('gr', require('omnisharp_extended').telescope_lsp_references, '[G]oto [R]eferences')
             map('gI', require('omnisharp_extended').telescope_lsp_implementation, '[G]oto [I]mplementation')
-            map('<leader>D', require('omnisharp_extended').telescope_lsp_type_definition, 'Type [D]efinition')
+            map('gD', require('omnisharp_extended').telescope_lsp_type_definition, 'Type [D]efinition')
           else
             map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
             map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
             map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-            map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+            map('gD', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
           end
 
           map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
