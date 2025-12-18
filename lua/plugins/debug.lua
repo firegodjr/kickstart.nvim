@@ -18,7 +18,29 @@ return {
       local dapui = require 'dap-view'
       return {
         -- Basic debugging keymaps
-        { '<F5>', dap.continue, desc = 'Debug: Start/Continue' },
+        {
+          '<F5>',
+          function()
+            local overseer = require 'overseer'
+            local running_tasks = overseer.list_tasks { status = 'RUNNING' }
+
+            if #running_tasks > 0 then
+              vim.ui.select({ 'Yes', 'No' }, {
+                prompt = 'Build is running. Cancel and start debugging?',
+              }, function(choice)
+                if choice == 'Yes' then
+                  for _, task in ipairs(running_tasks) do
+                    task:stop()
+                  end
+                  dap.continue()
+                end
+              end)
+            else
+              dap.continue()
+            end
+          end,
+          desc = 'Debug: Start/Continue',
+        },
         { '<F11>', dap.step_into, desc = 'Debug: Step Into' },
         { '<leader><F11>', dap.step_into, desc = 'Debug: Step Into' },
         { '<F10>', dap.step_over, desc = 'Debug: Step Over' },

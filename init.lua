@@ -76,8 +76,8 @@ vim.opt.scrolloff = 10
 
 -- keymaps
 -- Exit insert mode with jk
-vim.keymap.set('i', 'jk', '<Esc>')
-vim.keymap.set('i', 'kj', '<Esc>')
+vim.keymap.set('i', 'jk', '<Esc><cmd>w<cr>')
+vim.keymap.set('i', 'kj', '<Esc><cmd>w<cr>')
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -108,6 +108,12 @@ vim.keymap.set(
   '<leader>FF',
   '<Cmd>update<CR><Cmd>e ++ff=dos<CR><Cmd>setlocal ff=unix<CR><Cmd>w<CR>',
   { desc = '[F]ix [F]ile (remove excess ^M characters)' }
+)
+vim.keymap.set(
+  'n',
+  '<leader>FE',
+  '<Cmd>w ++enc=utf-8<CR>',
+  { desc = '[F]ix [E]ncoding (convert to utf-8)'}
 )
 
 -- [[ Basic Autocommands ]]
