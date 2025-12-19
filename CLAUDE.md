@@ -70,9 +70,8 @@ Core plugins are imported via `require 'core'`, which itself imports all files f
 - `<leader>FF` - Fix DOS-formatted files (remove ^M characters)
 
 ### Navigation (leap.nvim)
-- `s` - Leap forward
-- `S` - Leap backward
-- `gs` - Leap from windows
+- `s` - Leap
+- `S` - Leap from window
 
 ### Which-Key Groups
 - `<leader>c` - Code actions
