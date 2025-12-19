@@ -92,8 +92,8 @@ return {
           type = 'coreclr',
           request = 'attach',
           processId = require('dap.utils').pick_process,
-          cwd = '${workspaceFolder}'
-        }
+          cwd = '${workspaceFolder}',
+        },
       }
 
       require('mason-nvim-dap').setup {
@@ -120,6 +120,17 @@ return {
       }
 
       dap.listeners.after.event_initialized['dapui_config'] = dapui.open
+      dap.listeners.after.event_initialized['notify_running'] = function(session)
+        -- Send desktop notification when debug session starts (for long builds)
+        -- Fails silently if notify-send isn't installed
+        local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+        local config_name = session and session.config and session.config.name or nil
+        local message = config_name and (config_name .. ' (' .. project_name .. ')') or project_name
+        vim.fn.jobstart({ 'notify-send', 'Neovim Debug', message .. ' is now running', '--icon=dialog-information' }, {
+          detach = true,
+          on_stderr = function() end, -- Suppress errors
+        })
+      end
       dap.listeners.before.event_terminated['dapui_config'] = dapui.close
       dap.listeners.before.event_exited['dapui_config'] = dapui.close
 

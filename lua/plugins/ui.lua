@@ -1,12 +1,46 @@
 vim.o.showtabline = 2
 vim.opt.background = 'dark'
 
+-- ui.lua
+-- Add functionality for user experience here
+
 return {
-  -- display marks next to line number
+
   {
+    'https://codeberg.org/andyg/leap.nvim.git',
+    event = 'VimEnter',
+    dependencies = { 'https://github.com/tpope/vim-repeat.git' },
+    config = function()
+      -- set keybinds for <Plug>(leap)
+      vim.keymap.set({ 'n', 'x', 'o' }, 's', '<Plug>(leap)')
+      vim.keymap.set({ 'n', 'x', 'o' }, 'S', '<Plug>(leap-from-window)')
+    end,
+  },
+
+  { -- Highlight todo, notes, etc in comments
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
+
+  { -- Marks in the gutter
     'chentoast/marks.nvim',
     event = 'VeryLazy',
     opts = {},
+  },
+
+  { -- Git signs in the gutter
+    'lewis6991/gitsigns.nvim',
+    opts = {
+      signs = {
+        add = { text = '┃' },
+        change = { text = '┃' },
+        delete = { text = '_' },
+        topdelete = { text = '‾' },
+        changedelete = { text = '~' },
+      },
+    },
   },
 
   -- file tree
@@ -95,11 +129,11 @@ return {
             function()
               return vim.fn.getcwd()
             end,
-          }},
+          } },
           lualine_b = {
             'tabs',
           },
-          lualine_c = { 'overseer', dap_section  },
+          lualine_c = { 'overseer', dap_section },
           -- lualine_x = {{ icon='', git_blame.get_current_blame_text, git_blame, cond = git_blame.is_blame_text_available }},
           lualine_y = { { 'diff' } },
           lualine_z = { { 'branch', icon = '', draw_empty = true } },

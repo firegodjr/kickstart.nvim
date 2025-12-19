@@ -22,14 +22,13 @@ This is a Neovim configuration based on kickstart.nvim, extended with additional
 - `lua/core.lua` - Core plugin configurations (LSP, completion, treesitter, telescope, etc.)
 - `lua/plugins/*.lua` - Additional plugin configurations organized by category:
   - `debug.lua` - nvim-dap debugger setup (F5, F10, F11 keys)
-  - `editor.lua` - Editor enhancements (go.nvim, easy-dotnet.nvim, refactoring.nvim)
-  - `ui.lua` - UI-related plugins
+  - `ide.lua` - IDE enhancements (go.nvim, easy-dotnet.nvim, refactoring.nvim)
+  - `ui.lua` - UI-related plugins (leap.nvim, neo-tree, lualine, colorschemes, etc.)
   - `git.lua` - Git integrations
   - `autopairs.lua` - Auto-pairing functionality
   - `obsidian.lua` - Obsidian integration
   - `overseer.lua` - Task runner
   - `llm.lua` - LLM integrations
-  - `leap.lua` - Navigation plugin
   - `render-markdown.lua` - Markdown rendering
   - `template-literal-comments.lua` - Template literal comment support
   - `fun.lua` - Fun/experimental plugins
@@ -69,6 +68,11 @@ Core plugins are imported via `require 'core'`, which itself imports all files f
 - `,,` - Switch to previous buffer
 - `,d` - Delete current buffer and go to previous
 - `<leader>FF` - Fix DOS-formatted files (remove ^M characters)
+
+### Navigation (leap.nvim)
+- `s` - Leap forward
+- `S` - Leap backward
+- `gs` - Leap from windows
 
 ### Which-Key Groups
 - `<leader>c` - Code actions

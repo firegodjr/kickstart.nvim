@@ -1,7 +1,21 @@
 local wk = require 'which-key'
 wk.add { { '<leader>t', group = '[T]est' } }
 
+-- ide.lua --
+-- Add functionality for various programming languages here
+
 return {
+  { -- Lua LSP for Neovim config
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        { path = 'luvit-meta/library', words = { 'vim%.uv' } },
+      },
+    },
+  },
+  { 'Bilal2453/luvit-meta', lazy = true },
+
   {
     'ray-x/go.nvim',
     dependencies = { -- optional packages

@@ -1,22 +1,14 @@
+-- core.lua --
+-- Core libraries and features
+
 return {
-  {
+  { -- Manage per-project configs (exrc)
     'jedrzejboczar/exrc.nvim',
     dependencies = { 'neovim/nvim-lspconfig' },
     config = true,
   },
+
   'tpope/vim-sleuth',
-  { -- Git signs in the gutter
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '┃' },
-        change = { text = '┃' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
-  },
 
   { -- Show pending keybinds
     'folke/which-key.nvim',
@@ -157,17 +149,6 @@ return {
     end,
   },
 
-  { -- Lua LSP for Neovim config
-    'folke/lazydev.nvim',
-    ft = 'lua',
-    opts = {
-      library = {
-        { path = 'luvit-meta/library', words = { 'vim%.uv' } },
-      },
-    },
-  },
-  { 'Bilal2453/luvit-meta', lazy = true },
-
   { -- LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -284,6 +265,7 @@ return {
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
+        -- Don't format on save unless explicitly enabled
         if vim.g.format_on_save == nil or vim.g.format_on_save == false then
           return false
         end
@@ -362,18 +344,11 @@ return {
     end,
   },
 
-  { -- Highlight todo, notes, etc in comments
-    'folke/todo-comments.nvim',
-    event = 'VimEnter',
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    opts = { signs = false },
-  },
-
   { -- Various small plugins/modules
     'echasnovski/mini.nvim',
     config = function()
       require('mini.ai').setup { n_lines = 500 }
-      require('mini.surround').setup()
+      -- require('mini.surround').setup()
     end,
   },
 
