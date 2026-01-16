@@ -71,24 +71,6 @@ return {
     },
   },
 
-  -- toggleterm
-  {
-    'akinsho/toggleterm.nvim',
-    version = '*',
-    config = function()
-      local toggleterm = require 'toggleterm'
-      toggleterm.setup()
-      local Terminal = require('toggleterm.terminal').Terminal
-
-      -- scooter
-      local scooter = Terminal:new { cmd = 'scooter', hidden = true, direction = 'float', size = 40 }
-      local function scooter_toggle()
-        scooter:toggle()
-      end
-      vim.keymap.set('n', '<leader>sS', scooter_toggle, { noremap = true, silent = true, desc = '[S]earch [S]cooter' })
-    end,
-  },
-
   -- statusline
   {
     'nvim-lualine/lualine.nvim',

@@ -1,6 +1,5 @@
 local wk = require 'which-key'
-wk.add { { '<leader>n', group = 'Ge[n] (Ollama)' } }
---
+
 -- Helper to get color from highlight group
 local function get_hl_color(group, attr, fallback)
   local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group })
@@ -12,6 +11,7 @@ end
 
 return {
   -- claude code (if available)
+  -- TODO: Maybe replace with toggleterm for a more seamless experience
   {
     'greggh/claude-code.nvim',
     dependencies = {
@@ -22,7 +22,12 @@ return {
       if vim.fn.executable 'claude' == 0 then
         return
       end
-      require('claude-code').setup()
+      require('claude-code').setup {
+        window = {
+          split_ratio = 0.4,
+          position = 'botright',
+        },
+      }
     end,
   },
   -- codeium code insertion

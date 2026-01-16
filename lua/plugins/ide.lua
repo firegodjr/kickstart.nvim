@@ -81,6 +81,7 @@ return {
     end,
   },
   -- Refactoring
+  -- TODO: Need to read into how this actually works
   {
     'ThePrimeagen/refactoring.nvim',
     dependencies = {
