@@ -5,7 +5,16 @@ vim.opt.background = 'dark'
 -- Add functionality for user experience here
 
 return {
-
+  { -- shade inactive splits
+    'sunjon/shade.nvim',
+    config = function()
+      local shade = require('shade')
+      shade.setup();
+    end,
+  },
+  { -- zen mode
+    'folke/zen-mode.nvim',
+  },
   {
     'https://codeberg.org/andyg/leap.nvim.git',
     event = 'VimEnter',
@@ -21,7 +30,16 @@ return {
     'folke/todo-comments.nvim',
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
-    opts = { signs = false },
+    opts = {
+      signs = true,
+      keywords = {
+        DEBUG = {
+          icon = '󰃤',
+          color = 'hint',
+          alt = { 'DBG', 'TEMP' },
+        },
+      },
+    },
   },
 
   { -- Marks in the gutter
@@ -66,6 +84,37 @@ return {
         follow_current_file = {
           enabled = true,
           leave_dirs_open = false,
+        },
+      },
+      event_handlers = {
+        -- save layout before opening neotree
+        {
+          event = 'neo_tree_window_before_open',
+          handler = function()
+            -- vim.cmd("set noequalalways")
+            local layout = {}
+            for _, win in ipairs(vim.api.nvim_list_wins()) do
+              layout[win] = {
+                height = vim.api.nvim_win_get_height(win),
+                width = vim.api.nvim_win_get_width(win),
+              }
+            end
+            vim._neotree_layout = layout
+          end,
+        },
+        -- restore layout after closing neotree
+        {
+          event = 'neo_tree_window_after_close',
+          handler = function()
+            if vim._neotree_layout then
+              for win, dims in pairs(vim._neotree_layout) do
+                if vim.api.nvim_win_is_valid(win) then
+                  pcall(vim.api.nvim_win_set_height, win, dims.height)
+                  pcall(vim.api.nvim_win_set_width, win, dims.width)
+                end
+              end
+            end
+          end,
         },
       },
     },
@@ -160,11 +209,11 @@ return {
   { 'morhetz/gruvbox' },
   { 'sainnhe/gruvbox-material' },
   { 'Mofiqul/vscode.nvim' },
-  { 'gmr458/vscode_modern_theme.nvim' },
   { 'AlexvZyl/nordic.nvim' },
   { 'rafamadriz/neon' },
+  { 'projekt0n/github-nvim-theme' },
   {
     url = 'https://github.com/firegodjr/monokai-pro.nvim.git',
     priority = 1000, -- Make sure to load this before all the other start plugins.
-  },
+  }
 }
