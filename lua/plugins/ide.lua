@@ -42,34 +42,17 @@ return {
     ft = { 'go', 'gomod' },
     build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
-  {
-    'GustavEikaas/easy-dotnet.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope.nvim',
-    },
-    config = function()
-      require('easy-dotnet').setup {
-        test_runner = {
-          noBuild = false,
-          -- Add mappings consistent with existing plugins and built to invoke which-key
-          mappings = {
-            run_test_from_buffer = { lhs = '<leader>tr', desc = '[T]est [R]un' },
-            debug_test = { lhs = '<leader>td', desc = '[T]est [D]ebug' },
-            run = { lhs = '<leader>tr', desc = '[T]est [R]un' },
-            run_all = { lhs = '<leader>tR', desc = '[T]est [R]un All' },
-            expand = { lhs = '<CR>', desc = 'expand' },
-          },
-        },
-      }
-    end,
-    keys = {
-      { '<leader>tt', '<cmd>Dotnet testrunner<cr>', desc = '[T]ests [T]oggle' },
-      { '<leader>DD', '<cmd>Dotnet<cr>', desc = '[D]otnet List' },
-      { '<leader>Db', '<cmd>Dotnet build<cr>', desc = '[D]otnet [B]uild' },
-      { '<leader>Dw', '<cmd>Dotnet watch<cr>', desc = '[D]otnet [W]atch' },
-    },
-  },
+  -- {
+  --   'GustavEikaas/easy-dotnet.nvim',
+  --   event = 'BufEnter *.cs',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'nvim-telescope/telescope.nvim',
+  --   },
+  --   config = function()
+  --     require('easy-dotnet').setup()
+  --   end,
+  -- },
   -- Compile Less on save
   {
     'askfiy/neovim-easy-less',

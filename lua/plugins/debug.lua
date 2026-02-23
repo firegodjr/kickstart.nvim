@@ -86,16 +86,6 @@ return {
       local dap = require 'dap'
       local dapui = require 'dap-view'
 
-      dap.configurations.cs = {
-        {
-          name = 'Attach to Running Process',
-          type = 'coreclr',
-          request = 'attach',
-          processId = require('dap.utils').pick_process,
-          cwd = '${workspaceFolder}',
-        },
-      }
-
       require('mason-nvim-dap').setup {
         -- Makes a best effort to setup the various debuggers with
         -- reasonable debug configurations
@@ -116,6 +106,48 @@ return {
           -- Update this to ensure that you have the debuggers for the langs you want
           'netcoredbg',
           'delve',
+          'coreclr',
+          'codelldb',
+        },
+      }
+
+      dap.configurations.cs = {
+        {
+          name = 'Attach to Running Process',
+          type = 'coreclr',
+          request = 'attach',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+        },
+      }
+
+      -- Rust: auto-build with cargo before launching the debugger
+      dap.configurations.rust = {
+        {
+          name = 'Launch (cargo build)',
+          type = 'codelldb',
+          request = 'launch',
+          program = function()
+            vim.fn.system 'cargo build'
+            if vim.v.shell_error ~= 0 then
+              vim.notify('Cargo build failed! Run :!cargo build for details.', vim.log.levels.ERROR)
+              return ''
+            end
+            -- Find the binary name from cargo metadata
+            local ok, metadata = pcall(vim.json.decode, vim.fn.system 'cargo metadata --no-deps --format-version 1')
+            if ok then
+              for _, pkg in ipairs(metadata.packages or {}) do
+                for _, target in ipairs(pkg.targets or {}) do
+                  if vim.tbl_contains(target.kind, 'bin') then
+                    return (metadata.target_directory or (vim.fn.getcwd() .. '/target')) .. '/debug/' .. target.name
+                  end
+                end
+              end
+            end
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/target/debug/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
         },
       }
 

@@ -5,13 +5,13 @@ vim.opt.background = 'dark'
 -- Add functionality for user experience here
 
 return {
-  { -- shade inactive splits
-    'sunjon/shade.nvim',
-    config = function()
-      local shade = require('shade')
-      shade.setup();
-    end,
-  },
+  -- { -- shade inactive splits
+  --   'sunjon/shade.nvim',
+  --   config = function()
+  --     local shade = require('shade')
+  --     shade.setup();
+  --   end,
+  -- },
   { -- zen mode
     'folke/zen-mode.nvim',
   },
@@ -215,5 +215,5 @@ return {
   {
     url = 'https://github.com/firegodjr/monokai-pro.nvim.git',
     priority = 1000, -- Make sure to load this before all the other start plugins.
-  }
+  },
 }
