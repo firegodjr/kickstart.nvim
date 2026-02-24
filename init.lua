@@ -69,7 +69,7 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
-vim.opt.cursorline = true
+vim.opt.cursorline = false
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
@@ -109,47 +109,8 @@ vim.keymap.set(
   '<Cmd>update<CR><Cmd>e ++ff=dos<CR><Cmd>setlocal ff=unix<CR><Cmd>w<CR>',
   { desc = '[F]ix [F]ile (remove excess ^M characters)' }
 )
-vim.keymap.set(
-  'n',
-  '<leader>FE',
-  '<Cmd>w ++enc=utf-8<CR>',
-  { desc = '[F]ix [E]ncoding (convert to utf-8)'}
-)
+vim.keymap.set('n', '<leader>FE', '<Cmd>w ++enc=utf-8<CR>', { desc = '[F]ix [E]ncoding (convert to utf-8)' })
 
--- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
-
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
-vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-})
-
--- Enable word wrap for markdown
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'markdown',
-  callback = function()
-    vim.opt_local.wrap = true
-    vim.opt_local.linebreak = true
-  end,
-  desc = 'Enable word wrap for markdown files'
-})
-
--- Enable codelens
-vim.api.nvim_create_autocmd('CursorHold', {
-  callback = function()
-    -- For some reason codelens keeps getting unset, might be theme-specific
-    -- So just force the highlight group to a neutral color for now
-    vim.api.nvim_set_hl(0, "LspCodeLens", { fg = "#777777", italic = true })
-    vim.lsp.codelens.refresh()
-  end,
-  desc = 'Enable codelens on CursorHold'
-})
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -204,6 +165,44 @@ end
 if vim.g.neovide then
   require 'compat.neovide'
 end
+
+-- [[ Basic Autocommands ]]
+--  See `:help lua-guide-autocommands`
+
+-- Highlight when yanking (copying) text
+--  Try it with `yap` in normal mode
+--  See `:help vim.highlight.on_yank()`
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
+
+-- Enable word wrap for markdown
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'markdown',
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+  end,
+  desc = 'Enable word wrap for markdown files',
+})
+
+-- Enable codelens
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost' }, {
+  callback = function()
+    -- For some reason codelens keeps getting unset, might be theme-specific
+    -- So just force the highlight group to a neutral color for now
+    vim.api.nvim_set_hl(0, 'LspCodeLens', { fg = '#777777', italic = true })
+    vim.lsp.codelens.refresh()
+
+    -- linting
+    -- require("lint").try_lint()
+  end,
+  desc = 'Enable codelens on CursorHold',
+})
 
 -- Things that depend on a .nvim.lua file to set a global flag are loaded here
 vim.api.nvim_create_autocmd('VimEnter', {

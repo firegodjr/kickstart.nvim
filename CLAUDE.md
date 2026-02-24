@@ -26,6 +26,13 @@ Neovim config based on kickstart.nvim using lazy.nvim plugin manager.
 
 **Dotnet:** `<leader>DD` commands, `<leader>Db` build, `<leader>tt` test runner
 
+**Additional Keybinds**
+To view all keybinds that are loaded on startup (excluding those registered dynamically), run `nvim --headless -c 'redir! > keymaps.txt | verbose map | redir END' +qall` to output all keybind registrations to both stdout and a file.
+
+**Creating Keybinds**
+- When adding keybinds, they must be as semantic as possible but must not conflict with existing keybinds.
+  - e.g. "save all buffers" should be something like `<leader>sab` that can be read as "save all buffers" mentally
+
 ## Per-Project Config
 
 `.nvim.lua` files in project root (via built-in exrc):

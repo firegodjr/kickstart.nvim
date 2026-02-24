@@ -5,13 +5,6 @@ vim.opt.background = 'dark'
 -- Add functionality for user experience here
 
 return {
-  -- { -- shade inactive splits
-  --   'sunjon/shade.nvim',
-  --   config = function()
-  --     local shade = require('shade')
-  --     shade.setup();
-  --   end,
-  -- },
   { -- zen mode
     'folke/zen-mode.nvim',
   },
@@ -48,19 +41,6 @@ return {
     opts = {},
   },
 
-  { -- Git signs in the gutter
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '┃' },
-        change = { text = '┃' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
-  },
-
   -- file tree
   {
     'nvim-neo-tree/neo-tree.nvim',
@@ -85,6 +65,7 @@ return {
           enabled = true,
           leave_dirs_open = false,
         },
+        bind_to_cwd = false,
       },
       event_handlers = {
         -- save layout before opening neotree

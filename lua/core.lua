@@ -149,6 +149,26 @@ return {
     end,
   },
 
+  -- {
+  --   'mfussenegger/nvim-lint',
+  --   config = function()
+  --     require('lint').linters_by_ft = {
+  --       -- typescript = { 'biome' },
+  --     }
+  --   end,
+  -- },
+
+  {
+    'ahmedkhalf/project.nvim',
+    config = function()
+      require('project_nvim').setup {
+        patterns = { '.git', 'Makefile', 'package.json', '*.sln' },
+        manual_mode = true,
+      }
+      vim.keymap.set('n', '<leader>sp', '<cmd>Telescope projects<cr>')
+    end,
+  },
+
   { -- LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -245,6 +265,17 @@ return {
           end,
         },
       }
+
+      vim.lsp.config('biome', {
+        root_dir = function(bufnr, on_dir)
+          local fname = vim.api.nvim_buf_get_name(bufnr)
+          local root = vim.fs.root(fname, { 'biome.json', 'biome.jsonc' })
+          if root then
+            on_dir(root)
+          end
+        end,
+        root_markers = { 'biome.json', 'biome.jsonc' },
+      })
     end,
   },
 
