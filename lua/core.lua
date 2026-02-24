@@ -235,7 +235,7 @@ return {
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
-        ensure_installed = { 'ts_ls', 'omnisharp' },
+        ensure_installed = { 'ts_ls', 'csharp_ls' },
         automatic_enable = true,
         handlers = {
           function(server_name)
