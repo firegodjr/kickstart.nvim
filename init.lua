@@ -69,7 +69,7 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
-vim.opt.cursorline = false
+vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
@@ -191,7 +191,7 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 -- Enable codelens
-vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost' }, {
+vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold' }, {
   callback = function()
     -- For some reason codelens keeps getting unset, might be theme-specific
     -- So just force the highlight group to a neutral color for now

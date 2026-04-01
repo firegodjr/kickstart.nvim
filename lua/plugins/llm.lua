@@ -10,26 +10,6 @@ local function get_hl_color(group, attr, fallback)
 end
 
 return {
-  -- claude code (if available)
-  -- TODO: Maybe replace with toggleterm for a more seamless experience
-  {
-    'greggh/claude-code.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-    },
-    config = function()
-      -- don't set up if 'claude' command doesn't exist
-      if vim.fn.executable 'claude' == 0 then
-        return
-      end
-      require('claude-code').setup {
-        window = {
-          split_ratio = 0.4,
-          position = 'vertical',
-        },
-      }
-    end,
-  },
   -- codeium code insertion
   {
     'Exafunction/codeium.nvim',

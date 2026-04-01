@@ -169,4 +169,63 @@ return {
       require('nvim-dap-virtual-text').setup()
     end,
   },
+  -- Neotest: Debug tests inside of neovim
+  {
+    'nvim-neotest/neotest',
+    event = 'BufEnter',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+      'nvim-lua/plenary.nvim',
+      'antoinemadec/FixCursorHold.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      -- dotnet tests
+      'Nsidorenco/neotest-vstest',
+    },
+    config = function()
+      vim.g.neotest_vstest = {
+        dap_settings = {
+          type = 'coreclr',
+        },
+      }
+      require('neotest').setup {
+        adapters = {
+          require 'neotest-vstest',
+        },
+      }
+    end,
+    keys = {
+      {
+        '<leader>tt',
+        '<cmd>Neotest summary<cr>',
+      },
+      {
+        '<leader>to',
+        '<cmd>Neotest output-panel<cr>',
+      },
+      {
+        '<leader>',
+      },
+      {
+        '<leader>td',
+        function()
+          require('neotest').run.run { strategy = 'dap' }
+        end,
+        desc = 'Debug Nearest Test',
+      },
+      {
+        '<leader>tr',
+        function()
+          require('neotest').run.run()
+        end,
+        desc = 'Run Nearest Test',
+      },
+      {
+        '<leader>tR',
+        function()
+          require('neotest').run.run(vim.fn.expand '%')
+        end,
+        desc = 'Run Tests In File',
+      },
+    },
+  },
 }

@@ -15,7 +15,6 @@ return {
     },
   },
   { 'Bilal2453/luvit-meta', lazy = true },
-
   {
     'ray-x/go.nvim',
     dependencies = { -- optional packages
