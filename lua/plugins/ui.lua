@@ -5,6 +5,10 @@ vim.opt.background = 'dark'
 -- Add functionality for user experience here
 
 return {
+  {
+    'rrethy/vim-hexokinase',
+    build = 'make hexokinase'
+  },
   { -- zen mode
     'folke/zen-mode.nvim',
   },
