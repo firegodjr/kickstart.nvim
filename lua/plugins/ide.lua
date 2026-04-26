@@ -41,6 +41,12 @@ return {
     ft = { 'go', 'gomod' },
     build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
+  -- Adds new file bootstrapping and easy package management
+  {
+    'MoaidHathot/dotnet.nvim',
+    cmd = 'DotnetUI',
+    opts = {},
+  },
   -- {
   --   'GustavEikaas/easy-dotnet.nvim',
   --   event = 'BufEnter *.cs',

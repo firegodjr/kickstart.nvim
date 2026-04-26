@@ -42,7 +42,6 @@ return {
           desc = 'Debug: Start/Continue',
         },
         { '<F11>', dap.step_into, desc = 'Debug: Step Into' },
-        { '<leader><F11>', dap.step_into, desc = 'Debug: Step Into' },
         { '<F10>', dap.step_over, desc = 'Debug: Step Over' },
         { '<F8>', dap.step_out, desc = 'Debug: Step Out' },
         { '<leader>dq', dap.terminate, desc = 'Debug: Quit' },
@@ -86,6 +85,12 @@ return {
       local dap = require 'dap'
       local dapui = require 'dap-view'
 
+      dapui.setup {
+        winbar = {
+          sections = { 'watches', 'scopes', 'exceptions', 'breakpoints', 'threads', 'repl', 'console' },
+        },
+      }
+
       require('mason-nvim-dap').setup {
         -- Makes a best effort to setup the various debuggers with
         -- reasonable debug configurations
@@ -94,7 +99,7 @@ return {
         -- You can provide additional configuration to the handlers,
         -- see mason-nvim-dap README for more information
         handlers = {
-          -- Default setup
+          -- fallback for everything else
           function(config)
             require('mason-nvim-dap').default_setup(config)
           end,
@@ -112,6 +117,17 @@ return {
       }
 
       dap.configurations.cs = {
+        {
+          name = 'Debug Project',
+          type = 'coreclr',
+          request = 'launch',
+          program = function()
+            -- vim.fn.system 'dotnet build'
+            return require('dap.utils').pick_file { executables = false, filter = '.*%.dll' }
+          end,
+          cwd = '${workspaceFolder}',
+          console = 'integratedTerminal',
+        },
         {
           name = 'Attach to Running Process',
           type = 'coreclr',
