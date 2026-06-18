@@ -116,6 +116,8 @@ return {
         },
       }
 
+      dap.defaults.fallback.force_external_terminal = true
+
       dap.configurations.cs = {
         {
           name = 'Debug Project',
@@ -164,6 +166,8 @@ return {
           end,
           cwd = '${workspaceFolder}',
           stopOnEntry = false,
+          console = 'externalTerminal',
+          externalTerminal = true,
         },
       }
 
