@@ -275,6 +275,18 @@ return {
         end,
         root_markers = { 'biome.json', 'biome.jsonc' },
       })
+
+      -- Lazy-load projects so OmniSharp doesn't materialize the entire
+      -- Roslyn workspace up front in large monorepos.
+      -- vim.lsp.config('omnisharp', {
+      --   cmd = {
+      --     'omnisharp',
+      --     '--languageserver',
+      --     '--hostPID',
+      --     tostring(vim.fn.getpid()),
+      --     'msbuild:loadProjectsOnDemand=true',
+      --   },
+      -- })
     end,
   },
 

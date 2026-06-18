@@ -7,7 +7,7 @@ vim.opt.background = 'dark'
 return {
   {
     'rrethy/vim-hexokinase',
-    build = 'make hexokinase'
+    build = 'make hexokinase',
   },
   { -- zen mode
     'folke/zen-mode.nvim',
@@ -190,7 +190,12 @@ return {
   { 'nyoom-engineering/oxocarbon.nvim' },
   { 'EdenEast/nightfox.nvim' },
   { 'rebelot/kanagawa.nvim' },
-  { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
+  {
+    'catppuccin/nvim',
+    -- opts = { transparent_background = true },
+    name = 'catppuccin',
+    priority = 1000,
+  },
   { 'morhetz/gruvbox' },
   { 'sainnhe/gruvbox-material' },
   { 'Mofiqul/vscode.nvim' },

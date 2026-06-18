@@ -12,6 +12,31 @@ end
 return {
   -- codeium code insertion
   {
+    'alex35mil/pi.nvim',
+
+    -- Optional: required only for `:PiPasteImage` (clipboard image paste).
+    -- dependencies = { "HakonHarnes/img-clip.nvim" },
+
+    -- if you're fine with defaults:
+    config = function()
+      local pi = require 'pi'
+      pi.setup()
+
+      -- Global mappings — open / toggle / resume from anywhere.
+      vim.keymap.set({ 'n', 'v' }, '<Leader>pp', function()
+        vim.cmd 'Pi layout=side'
+      end, { desc = 'Pi side' })
+      vim.keymap.set({ 'n', 'v' }, '<Leader>pf', function()
+        vim.cmd 'Pi layout=float'
+      end, { desc = 'Pi float' })
+      vim.keymap.set({ 'n', 'v' }, '<Leader>pl', '<Cmd>PiToggleLayout<CR>', { desc = 'Pi toggle layout' })
+      vim.keymap.set({ 'n', 'v' }, '<Leader>pc', '<Cmd>PiContinue<CR>', { desc = 'Pi continue last session' })
+      vim.keymap.set({ 'n', 'v' }, '<Leader>pr', '<Cmd>PiResume<CR>', { desc = 'Pi resume past session' })
+      vim.keymap.set({ 'n', 'v' }, '<Leader>pm', '<Cmd>PiSendMention<CR>', { desc = 'Pi mention file/selection' })
+      vim.keymap.set({ 'n', 'v' }, '<Leader>pa', '<Cmd>PiAttention<CR>', { desc = 'Pi open next attention request' })
+    end,
+  },
+  {
     'Exafunction/codeium.nvim',
     dependencies = {
       'nvim-lua/plenary.nvim',
