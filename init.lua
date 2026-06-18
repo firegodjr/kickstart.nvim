@@ -203,13 +203,15 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Enable codelens
 vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWrite' }, {
   callback = function()
-    -- For some reason codelens keeps getting unset, might be theme-specific
-    -- So just force the highlight group to a neutral color for now
-    vim.api.nvim_set_hl(0, 'LspCodeLens', { fg = '#777777', italic = true })
-    vim.lsp.codelens.refresh()
+    if vim.bo.filetype ~= 'lua' then
+      -- For some reason codelens keeps getting unset, might be theme-specific
+      -- So just force the highlight group to a neutral color for now
+      vim.api.nvim_set_hl(0, 'LspCodeLens', { fg = '#777777', italic = true })
+      vim.lsp.codelens.refresh()
 
-    -- linting
-    -- require("lint").try_lint()
+      -- linting
+      -- require("lint").try_lint()
+    end
   end,
   desc = 'Enable codelens on CursorHold',
 })
