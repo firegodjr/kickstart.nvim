@@ -16,6 +16,7 @@ return {
     config = function(self, opts)
       local wk = require 'which-key'
       wk.add {
+        { '<leader>a', group = '[A]gent', mode = { 'n', 'v' } },
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },

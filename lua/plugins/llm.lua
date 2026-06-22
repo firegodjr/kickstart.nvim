@@ -84,6 +84,72 @@ return {
       },
     },
   },
+  {
+    'carlos-algms/agentic.nvim',
+    opts = {
+      provider = 'maki',
+      acp_providers = {
+        maki = {
+          name = 'Maki',
+          command = 'maki',
+          args = { 'acp' },
+        },
+      },
+      windows = {
+        position = 'right',
+      },
+    },
+    keys = {
+      {
+        '<C-\\>',
+        function()
+          require('agentic').toggle()
+        end,
+        mode = { 'n', 'v', 'i' },
+        desc = 'Toggle Agentic Chat (Maki)',
+      },
+      {
+        "<C-'>",
+        function()
+          require('agentic').add_selection_or_file_to_context()
+        end,
+        mode = { 'n', 'v' },
+        desc = 'Add Selection/File to Agentic Context',
+      },
+      {
+        '<C-,>',
+        function()
+          require('agentic').new_session()
+        end,
+        mode = { 'n', 'v', 'i' },
+        desc = 'New Agentic Session',
+      },
+      {
+        '<leader>ar',
+        function()
+          require('agentic').restore_session()
+        end,
+        mode = { 'n', 'v' },
+        desc = 'Agentic Restore Session',
+      },
+      {
+        '<leader>ad',
+        function()
+          require('agentic').add_current_line_diagnostics()
+        end,
+        mode = { 'n' },
+        desc = 'Add Current Line Diagnostic to Agentic',
+      },
+      {
+        '<leader>aD',
+        function()
+          require('agentic').add_buffer_diagnostics()
+        end,
+        mode = { 'n' },
+        desc = 'Add Buffer Diagnostics to Agentic',
+      },
+    },
+  },
   -- {
   --   -- Custom fork fixes issue w/ spaces
   --   url = 'https://github.com/firegodjr/nvim-aider.git',
