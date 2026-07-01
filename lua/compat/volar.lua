@@ -1,5 +1,7 @@
 local vue_typescript_plugin_path = vim.fn.stdpath 'data' .. '/mason/bin/vue-language-server'
 
+-- TODO: Make this work
+
 -- vim.lsp.config('ts_ls', {
 --   init_options = {
 --     plugins = {

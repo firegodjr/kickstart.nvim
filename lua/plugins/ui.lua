@@ -9,9 +9,6 @@ return {
     'rrethy/vim-hexokinase',
     build = 'make hexokinase',
   },
-  { -- zen mode
-    'folke/zen-mode.nvim',
-  },
   {
     'https://codeberg.org/andyg/leap.nvim.git',
     event = 'VimEnter',
@@ -37,12 +34,6 @@ return {
         },
       },
     },
-  },
-
-  { -- Marks in the gutter
-    'chentoast/marks.nvim',
-    event = 'VeryLazy',
-    opts = {},
   },
 
   -- file tree
