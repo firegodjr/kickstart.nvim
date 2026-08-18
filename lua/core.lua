@@ -16,6 +16,7 @@ return {
     config = function(self, opts)
       local wk = require 'which-key'
       wk.add {
+        { '<leader>a', group = '[A]gent', mode = { 'n', 'v' } },
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
@@ -437,24 +438,6 @@ return {
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
-  },
-
-  -- toggleterm
-  {
-    'akinsho/toggleterm.nvim',
-    version = '*',
-    config = function()
-      local toggleterm = require 'toggleterm'
-      toggleterm.setup()
-      local Terminal = require('toggleterm.terminal').Terminal
-
-      -- scooter
-      local scooter = Terminal:new { cmd = 'scooter', hidden = true, direction = 'float', size = 40 }
-      local function scooter_toggle()
-        scooter:toggle()
-      end
-      vim.keymap.set('n', '<leader>sS', scooter_toggle, { noremap = true, silent = true, desc = '[S]earch [S]cooter' })
-    end,
   },
 
   -- Import all from plugins dir
