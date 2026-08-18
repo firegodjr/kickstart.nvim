@@ -14,6 +14,15 @@ return {
       },
     },
   },
+  {
+    'hedyhli/outline.nvim',
+    config = function()
+      require('outline').setup {}
+    end,
+    keys = {
+      { '|', ':Outline<cr>', desc = 'Open Outline' },
+    },
+  },
   { 'Bilal2453/luvit-meta', lazy = true },
   {
     'ray-x/go.nvim',

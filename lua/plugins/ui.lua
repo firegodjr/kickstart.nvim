@@ -179,7 +179,16 @@ return {
 
   -- cool colorschemes --
   { 'nyoom-engineering/oxocarbon.nvim' },
-  { 'EdenEast/nightfox.nvim' },
+  {
+    'EdenEast/nightfox.nvim',
+    opts = {
+      options = {
+        styles = {
+          comments = 'italic',
+        },
+      },
+    },
+  },
   { 'rebelot/kanagawa.nvim' },
   {
     'catppuccin/nvim',
@@ -196,5 +205,18 @@ return {
   {
     url = 'https://github.com/firegodjr/monokai-pro.nvim.git',
     priority = 1000, -- Make sure to load this before all the other start plugins.
+  },
+  {
+    'maxmx03/solarized.nvim',
+    lazy = false,
+    priority = 1000,
+    ---@type solarized.config
+    opts = {},
+    config = function(_, opts)
+      vim.o.termguicolors = true
+      vim.o.background = 'dark'
+      require('solarized').setup(opts)
+      -- vim.cmd.colorscheme 'solarized'
+    end,
   },
 }
