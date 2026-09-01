@@ -427,7 +427,7 @@ local function completion_prompt(context)
 end
 
 local SYSTEM_PROMPT =
-  'You provide inline code completions. Return only the code to insert. Your output must be syntactically correct when placed between <|prefix|> and <|suffix|>'
+  'You provide inline code completions. Return only the code to insert. Your output must be syntactically correct when placed between prefix and suffix'
 local function request_body(provider, context)
   local prompt = completion_prompt(context)
   if provider.api_format == 'responses' then
@@ -591,6 +591,14 @@ local function unfence(text)
     return closed
   end
   return text:match(FENCE_OPEN .. '(.*)$') or text
+end
+
+local function strip_indent(text, prefix)
+  local line = prefix:match '[^\n]*$' or ''
+  if not line:match '^%s*$' then
+    return text
+  end
+  return (text:gsub('^[ \t]+', ''))
 end
 
 local function parse_completion(response)
@@ -799,6 +807,7 @@ local function complete(request_id, bufnr, params, callback)
       discard('empty', 'no usable text in the response')
       return
     end
+    text = strip_indent(text, context.prefix)
     log.outcome = 'ok'
     log.text = text
     write_log(log)
@@ -1152,6 +1161,10 @@ end
 
 function M._unfence(text)
   return unfence(text)
+end
+
+function M._strip_indent(text, prefix)
+  return strip_indent(text, prefix)
 end
 
 function M._approval_path(bufnr)
