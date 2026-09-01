@@ -1,18 +1,25 @@
 local M = {}
 
+local yaml = require 'inline_completion.yaml'
+
 local CLIENT_NAME = 'inline-completion'
-local MARKER_NAME = '.nvim/inline-completion.json'
-local STATE_FILE = vim.fs.normalize(vim.fn.stdpath 'state' .. '/inline-completion.json')
+local MARKER_NAME = '.nvim/inline-completion.yaml'
+local LEGACY_MARKER_NAME = '.nvim/inline-completion.json'
+local STATE_FILE = vim.fs.normalize(vim.fn.stdpath 'state' .. '/inline-completion.yaml')
+local LEGACY_STATE_FILE = vim.fs.normalize(vim.fn.stdpath 'state' .. '/inline-completion.json')
+local PROVIDERS_DIR = vim.fs.normalize(vim.fn.stdpath 'config' .. '/inline-completion/providers')
 
 local LOG_FILE = vim.fs.normalize(vim.fn.stdpath 'log' .. '/inline-completion.log')
 local LOG_ENTRIES = 10
 local LOG_SECTION_CHARS = 4000
 
-local HOST_GATEWAY = 'http://10.0.2.2:11434/v1'
-local HOST_MODEL = 'qwen2.5-coder:1.5b'
 local DEFAULT_PROVIDER = 'azure'
 
 local KIND = { AZURE = 'azure', OPENAI = 'openai' }
+local ROUTE = { AUTO = 'auto', V1 = 'v1', DEPLOYMENTS = 'deployments', RESPONSES = 'responses' }
+local FORMAT = { AUTO = 'auto', CHAT = 'chat', RESPONSES = 'responses', FIM = 'fim' }
+local TEMPERATURE = { SUPPORTED = 'supported', UNSUPPORTED = 'unsupported' }
+local PROMPT = { CURSOR = 'cursor', PREFIX_SUFFIX = 'prefix_suffix' }
 
 local state = {
   configured = false,
@@ -79,13 +86,21 @@ local function marker_path(root)
   return root and (root .. '/' .. MARKER_NAME) or nil
 end
 
+local function legacy_marker_path(root)
+  return root and (root .. '/' .. LEGACY_MARKER_NAME) or nil
+end
+
 local function read_approval(root)
-  local path = marker_path(root)
-  if not path or vim.fn.filereadable(path) ~= 1 then
-    return false
+  local value = marker_path(root) and yaml.read(marker_path(root))
+  if not value then
+    local legacy = legacy_marker_path(root)
+    if not legacy or vim.fn.filereadable(legacy) ~= 1 then
+      return false
+    end
+    local ok, decoded = pcall(vim.json.decode, table.concat(vim.fn.readfile(legacy), '\n'))
+    value = ok and decoded or nil
   end
-  local ok, value = pcall(vim.json.decode, table.concat(vim.fn.readfile(path), '\n'))
-  if not ok or type(value) ~= 'table' or value.approved ~= true then
+  if type(value) ~= 'table' or value.approved ~= true then
     return false
   end
   for key in pairs(value) do
@@ -106,11 +121,11 @@ local function write_approval(root)
   end
   local path = marker_path(root)
   local temporary = path .. '.tmp.' .. tostring(vim.fn.getpid())
-  local ok, encoded = pcall(vim.json.encode, { approved = true })
+  local ok, encoded = pcall(yaml.encode, { approved = true })
   if not ok then
     return false, 'could not encode the approval marker'
   end
-  if vim.fn.writefile({ encoded }, temporary, 'b') ~= 0 then
+  if vim.fn.writefile(encoded, temporary) ~= 0 then
     return false, 'could not write the approval marker'
   end
   local renamed, rename_error = vim.uv.fs_rename(temporary, path)
@@ -126,20 +141,24 @@ local function remove_approval(root)
   if not path then
     return false, 'no project root was detected'
   end
-  if vim.fn.filereadable(path) == 1 and vim.fn.delete(path) ~= 0 then
-    return false, 'could not remove the approval marker'
+  for _, target in ipairs { path, legacy_marker_path(root) } do
+    if vim.fn.filereadable(target) == 1 and vim.fn.delete(target) ~= 0 then
+      return false, 'could not remove the approval marker'
+    end
   end
   return true
 end
 
+local function read_legacy_preferences()
+  if vim.fn.filereadable(LEGACY_STATE_FILE) ~= 1 then
+    return nil
+  end
+  local ok, value = pcall(vim.json.decode, table.concat(vim.fn.readfile(LEGACY_STATE_FILE), '\n'))
+  return ok and type(value) == 'table' and value or nil
+end
+
 local function read_preferences()
-  if vim.fn.filereadable(STATE_FILE) ~= 1 then
-    return {}
-  end
-  local ok, value = pcall(vim.json.decode, table.concat(vim.fn.readfile(STATE_FILE), '\n'))
-  if not ok or type(value) ~= 'table' then
-    return {}
-  end
+  local value = yaml.read(STATE_FILE) or read_legacy_preferences() or {}
   value.models = type(value.models) == 'table' and value.models or {}
   return value
 end
@@ -147,88 +166,134 @@ end
 local function write_preferences(preferences)
   local directory = vim.fs.dirname(STATE_FILE)
   vim.fn.mkdir(directory, 'p')
-  local ok, encoded = pcall(vim.json.encode, preferences)
+  local ok, encoded = pcall(yaml.encode, preferences)
   if not ok then
     return false, 'could not encode the provider preferences'
   end
-  if vim.fn.writefile({ encoded }, STATE_FILE) ~= 0 then
+  if vim.fn.writefile(encoded, STATE_FILE) ~= 0 then
     return false, 'could not write the provider preferences'
   end
   return true
 end
 
-local function env_or(value, ...)
+local function migrate_preferences()
+  if vim.fn.filereadable(STATE_FILE) == 1 then
+    return
+  end
+  local legacy = read_legacy_preferences()
+  if legacy then
+    write_preferences(legacy)
+  end
+end
+
+
+local function env_or(value, names)
   if value ~= nil and value ~= '' then
     return value
   end
-  for _, name in ipairs { ... } do
+  for _, name in ipairs(names or {}) do
     if vim.env[name] and vim.env[name] ~= '' then
       return vim.env[name]
     end
   end
 end
 
+local PROVIDER_DEFAULTS = {
+  kind = KIND.OPENAI,
+  order = math.huge,
+  api_format = FORMAT.AUTO,
+  route = ROUTE.AUTO,
+  temperature = TEMPERATURE.SUPPORTED,
+  prompt = PROMPT.CURSOR,
+}
+
+local function load_provider(path)
+  local definition = yaml.read(path)
+  if not definition then
+    announce('Could not read ' .. path .. '.', vim.log.levels.ERROR)
+    return nil
+  end
+
+  local provider = merge(PROVIDER_DEFAULTS, definition)
+  provider.label = provider.label or vim.fs.basename(path):gsub('%.yaml$', '')
+  provider.endpoint = env_or(provider.endpoint, provider.endpoint_env)
+  provider.model = env_or(provider.model, provider.model_env)
+  provider.api_key = env_or(provider.api_key, provider.key_env)
+
+  return provider
+end
+
+local function model_matches(pattern, model)
+  if not pattern:find('*', 1, true) then
+    return false
+  end
+  local escaped = pattern:gsub('[%^%$%(%)%%%.%[%]%+%-%?]', '%%%1'):gsub('%*', '.*')
+  return model:match('^' .. escaped .. '$') ~= nil
+end
+
+local function apply_model_overrides(provider)
+  local overrides = provider.models
+  if not overrides or not provider.model then
+    return provider
+  end
+
+  local patterns = {}
+  for pattern in pairs(overrides) do
+    if model_matches(pattern, provider.model) then
+      patterns[#patterns + 1] = pattern
+    end
+  end
+  table.sort(patterns, function(left, right)
+    return #left < #right
+  end)
+  if overrides[provider.model] then
+    patterns[#patterns + 1] = provider.model
+  end
+
+  local resolved = provider
+  for _, pattern in ipairs(patterns) do
+    resolved = merge(resolved, overrides[pattern])
+  end
+  return resolved
+end
+
+local function load_providers()
+  local providers = {}
+  for name, kind in vim.fs.dir(PROVIDERS_DIR) do
+    local key = name:match '^(.+)%.yaml$'
+    if key and kind == 'file' then
+      providers[key] = load_provider(PROVIDERS_DIR .. '/' .. name)
+    end
+  end
+  return providers
+end
+
 local function normalize_config(opts)
   local defaults = {
     provider = DEFAULT_PROVIDER,
-    providers = {
-      azure = {
-        label = 'Azure OpenAI',
-        kind = KIND.AZURE,
-        order = 1,
-        endpoint = nil,
-        deployment = nil,
-        api_key = nil,
-        api_version = '2025-04-01-preview',
-        route = 'auto',
-        api_format = 'auto',
-      },
-      ollama = {
-        label = 'Ollama (VM host)',
-        kind = KIND.OPENAI,
-        order = 2,
-        endpoint = HOST_GATEWAY,
-        model = HOST_MODEL,
-        api_key = 'ollama',
-      },
-      openrouter = {
-        label = 'OpenRouter',
-        kind = KIND.OPENAI,
-        order = 3,
-        endpoint = 'https://openrouter.ai/api/v1',
-        model = 'openai/gpt-4o-mini',
-        api_key = nil,
-        needs_approval = true,
-      },
-    },
+    providers = load_providers(),
     max_context_lines = 80,
     max_context_chars = 12000,
     max_response_tokens = 128,
+    max_completion_lines = 6,
+    max_reasoning_tokens = 2048,
     temperature = 0.2,
     timeout_ms = 8000,
     transport = nil,
   }
   local config = merge(defaults, opts)
 
-  local azure = config.providers.azure
-  azure.endpoint = env_or(azure.endpoint, 'AZ_AI_ENDPOINT', 'BRAD_AZURE_OPENAI_ENDPOINT')
-  azure.deployment = env_or(azure.deployment, 'AZ_AI_DEPLOYMENT', 'BRAD_AZURE_OPENAI_DEPLOYMENT')
-  azure.api_key = env_or(azure.api_key, 'AZ_AI_KEY', 'BRAD_AZURE_OPENAI_API_KEY')
-  config.providers.openrouter.api_key = env_or(config.providers.openrouter.api_key, 'OPENROUTER_API_KEY')
-
   local preferences = read_preferences()
   if config.providers[preferences.provider] then
     config.provider = preferences.provider
   end
   for name, model in pairs(preferences.models or {}) do
-    local provider = config.providers[name]
-    if provider and type(model) == 'string' then
-      if provider.kind == KIND.AZURE then
-        provider.deployment = model
-      else
-        provider.model = model
-      end
+    if config.providers[name] and type(model) == 'string' then
+      config.providers[name].model = model
     end
+  end
+  for name, provider in pairs(config.providers) do
+    config.providers[name] = apply_model_overrides(provider)
   end
   return config
 end
@@ -252,7 +317,7 @@ local function configured(value)
 end
 
 local function model_of(provider)
-  return provider.kind == KIND.AZURE and provider.deployment or provider.model
+  return provider.model
 end
 
 local function is_configured(provider)
@@ -268,6 +333,7 @@ end
 
 local V1_PATH = '/openai/v1'
 local DEPLOYMENTS_PATH = '/openai/deployments'
+local RESPONSES_PATH = '/openai/responses'
 
 local function azure_base(endpoint)
   local base = trim_endpoint(endpoint)
@@ -284,23 +350,41 @@ local function url_escape(value)
   end)
 end
 
+local function versioned(url, provider)
+  if not configured(provider.api_version) then
+    return url
+  end
+  return url .. '?api-version=' .. url_escape(provider.api_version)
+end
+
+local function azure_route(provider)
+  if provider.route ~= ROUTE.AUTO then
+    return provider.route
+  end
+  local _, endpoint_is_v1 = azure_base(provider.endpoint)
+  return endpoint_is_v1 and ROUTE.V1 or ROUTE.DEPLOYMENTS
+end
+
 local function azure_request(name, provider)
-  local base, endpoint_is_v1 = azure_base(provider.endpoint)
-  local is_v1 = provider.route == 'v1' or (provider.route == 'auto' and endpoint_is_v1)
-  local use_responses = provider.api_format == 'responses' or (provider.api_format == 'auto' and is_v1)
+  local base = azure_base(provider.endpoint)
+  local route = azure_route(provider)
   local headers = { ['Content-Type'] = 'application/json' }
   local body = {}
+  local api_format = FORMAT.CHAT
   local url
 
-  if is_v1 then
-    url = base .. V1_PATH .. (use_responses and '/responses' or '/chat/completions')
-    body.model = provider.deployment
+  if route == ROUTE.V1 then
+    api_format = provider.api_format == FORMAT.CHAT and FORMAT.CHAT or FORMAT.RESPONSES
+    url = base .. V1_PATH .. (api_format == FORMAT.RESPONSES and '/responses' or '/chat/completions')
+    body.model = provider.model
     headers.Authorization = 'Bearer ' .. provider.api_key
+  elseif route == ROUTE.RESPONSES then
+    api_format = FORMAT.RESPONSES
+    url = versioned(base .. RESPONSES_PATH, provider)
+    body.model = provider.model
+    headers['api-key'] = provider.api_key
   else
-    url = base .. DEPLOYMENTS_PATH .. '/' .. url_escape(provider.deployment) .. '/chat/completions'
-    if configured(provider.api_version) then
-      url = url .. '?api-version=' .. url_escape(provider.api_version)
-    end
+    url = versioned(base .. DEPLOYMENTS_PATH .. '/' .. url_escape(provider.model) .. '/chat/completions', provider)
     headers['api-key'] = provider.api_key
   end
 
@@ -308,8 +392,36 @@ local function azure_request(name, provider)
     name = name,
     url = url,
     headers = headers,
-    api_format = use_responses and 'responses' or 'chat',
+    api_format = api_format,
+    prompt = provider.prompt,
+    temperature = provider.temperature,
+    reasoning = provider.reasoning,
+    timeout_ms = provider.timeout_ms,
     body = body,
+  }
+end
+
+local FIM_PATH = '/api/generate'
+
+local function ollama_base(endpoint)
+  return (trim_endpoint(endpoint):gsub('/v1$', ''))
+end
+
+local function fim_request(name, provider)
+  return {
+    name = name,
+    url = ollama_base(provider.endpoint) .. FIM_PATH,
+    headers = { ['Content-Type'] = 'application/json' },
+    api_format = FORMAT.FIM,
+    timeout_ms = provider.timeout_ms,
+    body = {
+      model = provider.model,
+      stream = false,
+      options = {
+        num_predict = config().max_response_tokens,
+        temperature = config().temperature,
+      },
+    },
   }
 end
 
@@ -323,12 +435,14 @@ local function openai_request(name, provider)
       ['Content-Type'] = 'application/json',
       Authorization = 'Bearer ' .. provider.api_key,
     },
-    api_format = 'chat',
+    api_format = FORMAT.CHAT,
+    prompt = provider.prompt,
+    temperature = provider.temperature,
+    timeout_ms = provider.timeout_ms,
     body = {
       model = provider.model,
       messages = {},
       max_tokens = config().max_response_tokens,
-      temperature = config().temperature,
       stream = false,
     },
   }
@@ -354,6 +468,9 @@ local function provider_for(bufnr)
 
   if provider.kind == KIND.AZURE then
     return azure_request(name, provider)
+  end
+  if provider.api_format == FORMAT.FIM then
+    return fim_request(name, provider)
   end
   return openai_request(name, provider)
 end
@@ -416,34 +533,67 @@ local function context_for(bufnr, row, character)
   }
 end
 
-local function completion_prompt(context)
+local CURSOR = '<|cursor|>'
+
+local STYLES = {
+  [PROMPT.CURSOR] = {
+    system = 'You provide inline code completions. The code you receive has '
+      .. CURSOR
+      .. ' marking the caret. Return only the code that replaces '
+      .. CURSOR
+      .. '. No explanation, no code fences, and never repeat code that already surrounds the caret. Your output must be syntactically correct in place.',
+    user = function(context)
+      return context.prefix .. CURSOR .. context.suffix
+    end,
+  },
+  [PROMPT.PREFIX_SUFFIX] = {
+    system = 'You provide inline code completions. Return only the code to insert. Your output must be syntactically correct when placed between prefix and suffix',
+    user = function(context)
+      return table.concat({ '<|prefix|>', context.prefix, '<|suffix|>', context.suffix }, '\n')
+    end,
+  },
+}
+
+local function completion_prompt(style, context)
   return table.concat({
     'Filetype: ' .. (context.filetype ~= '' and context.filetype or 'text'),
-    '<|prefix|>',
-    context.prefix,
-    '<|suffix|>',
-    context.suffix,
+    style.user(context),
   }, '\n')
 end
 
-local SYSTEM_PROMPT =
-  'You provide inline code completions. Return only the code to insert. Your output must be syntactically correct when placed between prefix and suffix'
-local function request_body(provider, context)
-  local prompt = completion_prompt(context)
-  if provider.api_format == 'responses' then
-    provider.body.input = {
-      { role = 'system', content = SYSTEM_PROMPT },
-      { role = 'user', content = prompt },
-    }
-    provider.body.max_output_tokens = config().max_response_tokens
-    provider.body.temperature = config().temperature
-  else
-    provider.body.messages = {
-      { role = 'system', content = SYSTEM_PROMPT },
-      { role = 'user', content = prompt },
-    }
+local function response_budget(request)
+  if not request.reasoning then
+    return config().max_response_tokens
   end
-  return provider.body
+  return config().max_response_tokens + config().max_reasoning_tokens
+end
+
+local function request_body(request, context)
+  if request.api_format == FORMAT.FIM then
+    request.body.prompt = context.prefix
+    request.body.suffix = context.suffix
+    return request.body
+  end
+
+  local style = STYLES[request.prompt] or STYLES[PROMPT.CURSOR]
+  local messages = {
+    { role = 'system', content = style.system },
+    { role = 'user', content = completion_prompt(style, context) },
+  }
+
+  if request.api_format == FORMAT.RESPONSES then
+    request.body.input = messages
+    request.body.max_output_tokens = response_budget(request)
+    request.body.reasoning = request.reasoning
+  else
+    request.body.messages = messages
+  end
+
+  if request.temperature ~= TEMPERATURE.UNSUPPORTED then
+    request.body.temperature = config().temperature
+  end
+
+  return request.body
 end
 
 local function curl_quote(value)
@@ -593,6 +743,28 @@ local function unfence(text)
   return text:match(FENCE_OPEN .. '(.*)$') or text
 end
 
+local function first_content_line(text)
+  for line in text:gmatch '[^\n]*' do
+    if line:match '%S' then
+      return (line:gsub('^%s+', ''))
+    end
+  end
+end
+
+local function trim_overrun(text, suffix)
+  local boundary = first_content_line(suffix)
+  local limit = config().max_completion_lines
+  local kept = {}
+  for line in text:gmatch '([^\n]*)\n?' do
+    if line:gsub('^%s+', '') == boundary or #kept >= limit then
+      break
+    end
+    kept[#kept + 1] = line
+  end
+  local trimmed = table.concat(kept, '\n'):gsub('%s+$', '')
+  return trimmed ~= '' and trimmed or text
+end
+
 local function strip_indent(text, prefix)
   local line = prefix:match '[^\n]*$' or ''
   if not line:match '^%s*$' then
@@ -604,6 +776,9 @@ end
 local function parse_completion(response)
   if type(response) ~= 'table' then
     return nil
+  end
+  if type(response.response) == 'string' and not response.response:match '^%s*$' then
+    return unfence(response.response)
   end
   if type(response.output_text) == 'string' and not response.output_text:match '^%s*$' then
     return unfence(response.output_text)
@@ -632,6 +807,17 @@ local function parse_completion(response)
     return nil
   end
   return unfence(content)
+end
+
+local function truncated_reason(decoded)
+  if decoded.status ~= 'incomplete' then
+    return nil
+  end
+  local reason = (decoded.incomplete_details or {}).reason
+  if reason == 'max_output_tokens' then
+    return 'the model spent its whole token budget before answering'
+  end
+  return 'the provider returned an incomplete response' .. (reason and (': ' .. reason) or '')
 end
 
 local function truncate(text, limit)
@@ -731,7 +917,7 @@ local function complete(request_id, bufnr, params, callback)
     url = provider.url,
     headers = provider.headers,
     body = body,
-    timeout_ms = config().timeout_ms,
+    timeout_ms = provider.timeout_ms or config().timeout_ms,
   }
   for id, pending in pairs(state.requests) do
     if pending.bufnr == bufnr then
@@ -751,6 +937,9 @@ local function complete(request_id, bufnr, params, callback)
       log.outcome = outcome
       log.detail = detail
       write_log(log)
+      if detail and outcome ~= 'stale' then
+        notify('Inline completion: ' .. detail .. '.', vim.log.levels.WARN, outcome .. detail)
+      end
       callback(nil, { items = {} })
     end
 
@@ -798,14 +987,17 @@ local function complete(request_id, bufnr, params, callback)
       return
     end
     local choice = decoded.choices and decoded.choices[1]
-    if decoded.status == 'incomplete' or (choice and choice.finish_reason == 'content_filter') then
-      discard('filtered', 'provider reported an incomplete or filtered response')
+    if choice and choice.finish_reason == 'content_filter' then
+      discard('filtered', 'provider filtered the response')
       return
     end
     local text = parse_completion(decoded)
     if not text then
-      discard('empty', 'no usable text in the response')
+      discard('empty', truncated_reason(decoded) or 'no usable text in the response')
       return
+    end
+    if provider.api_format == FORMAT.FIM then
+      text = trim_overrun(text, context.suffix)
     end
     text = strip_indent(text, context.prefix)
     log.outcome = 'ok'
@@ -990,11 +1182,11 @@ function M.select_model()
   local provider = config().providers[name]
 
   if provider.kind == KIND.AZURE then
-    vim.ui.input({ prompt = 'Azure deployment: ', default = provider.deployment or '' }, function(value)
+    vim.ui.input({ prompt = 'Azure deployment: ', default = provider.model or '' }, function(value)
       if not configured(value) then
         return
       end
-      provider.deployment = value
+      provider.model = value
       remember(name, value)
       announce('Azure deployment set to ' .. value .. '.')
     end)
@@ -1121,6 +1313,7 @@ local function setup_commands()
 end
 
 function M.setup(opts)
+  migrate_preferences()
   state.config = normalize_config(opts or {})
   state.configured = true
   setup_commands()
@@ -1165,6 +1358,10 @@ end
 
 function M._strip_indent(text, prefix)
   return strip_indent(text, prefix)
+end
+
+function M._trim_overrun(text, suffix)
+  return trim_overrun(text, suffix)
 end
 
 function M._approval_path(bufnr)

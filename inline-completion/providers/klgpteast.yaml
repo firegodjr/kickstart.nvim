@@ -1,0 +1,21 @@
+label: KLGptEast
+kind: azure
+order: 2
+
+endpoint_env: [AZ_KLGPTEAST_ENDPOINT]
+key_env: [AZ_KLGPTEAST_KEY, AZ_KLGTPEAST_KEY]
+
+api_version: 2025-04-01-preview
+route: auto
+api_format: responses
+prompt: cursor
+
+model: gpt-5.1-codex-mini
+
+models:
+  gpt-5*:
+    temperature: unsupported
+  gpt-5.1-codex-mini:
+    timeout_ms: 20000
+    reasoning:
+      effort: low
