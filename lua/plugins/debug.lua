@@ -22,7 +22,13 @@ return {
           '<F5>',
           function()
             local overseer = require 'overseer'
-            local running_tasks = overseer.list_tasks { status = 'RUNNING' }
+            local running_tasks = vim.tbl_filter(function(task)
+              local cmd = task.cmd
+              if type(cmd) == 'table' then
+                return not vim.tbl_contains(cmd, '--watch')
+              end
+              return not cmd:match('%f[%w]--watch%f[^%w]')
+            end, overseer.list_tasks { status = 'RUNNING' })
 
             if #running_tasks > 0 then
               vim.ui.select({ 'Yes', 'No' }, {
