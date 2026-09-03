@@ -178,6 +178,7 @@ return {
       'Hoffs/omnisharp-extended-lsp.nvim',
       { 'j-hui/fidget.nvim', opts = {} },
       'hrsh7th/cmp-nvim-lsp',
+      'Aietes/esp32.nvim',
     },
     config = function()
       vim.api.nvim_create_autocmd('LspAttach', {
@@ -247,6 +248,7 @@ return {
             },
           },
         },
+        clangd = require('esp32').lsp_config(),
       }
 
       require('mason').setup()
