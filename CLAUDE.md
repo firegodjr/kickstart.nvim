@@ -26,6 +26,18 @@ Neovim config based on kickstart.nvim using lazy.nvim plugin manager.
 
 **Dotnet:** `<leader>DD` commands, `<leader>Db` build, `<leader>tt` test runner
 
+**Inline completion (`lua/inline_completion.lua`):** `<M-i>` request, `<M-l>` accept, `<M-d>` dismiss, `<leader>ai` config menu (provider/model). `:InlineCompletionLog` opens the last 10 requests (context, raw response, outcome) from `stdpath('log')/inline-completion.log`.
+
+Providers are one YAML file each in `inline-completion/providers/` — the filename is the provider key, so adding a provider means dropping in a file, not editing Lua. Keys: `label`, `kind` (`azure`/`openai`), `order`, `endpoint`/`model`/`api_key` or their `*_env` lists, `api_version`, `route`, `api_format`, `prompt`, `temperature`, `reasoning`, `timeout_ms`, `needs_approval`.
+
+- `route` — `auto` reads it off the endpoint (`/openai/v1` → v1 Responses with a bearer token, otherwise `/openai/deployments/<model>/chat/completions` with `api-key`). Force it with `v1`, `deployments`, or `responses` (the pre-v1 `/openai/responses?api-version=...` path).
+- `api_format` — `chat`, `responses`, or `fim`. `fim` posts to Ollama's native `/api/generate` with `prompt`/`suffix`, so the model's own FIM tokens get applied by its template; it ignores `prompt`. Real FIM only exists on Ollama — Azure has no FIM endpoint.
+- `prompt` — chat/responses framing: `cursor` (a `<|cursor|>` caret marker) or `prefix_suffix`. `prefix_suffix` makes reasoning models think until they run out of budget; keep `cursor` for them.
+- `temperature: unsupported` omits the field for models that reject it (gpt-5 family). `reasoning: { effort: ... }` adds `max_reasoning_tokens` to the output budget — without that headroom reasoning eats the whole budget and the response comes back empty.
+- `models:` holds per-model overrides layered onto the provider, keyed by deployment name or a `*` glob (`gpt-5*`). Globs apply shortest-first, then the exact key. Anything a model rejects — `temperature`, `reasoning` — belongs here, not at the provider level, or switching models via `<leader>ai` sends settings the new one refuses.
+
+Provider choice and per-provider model persist in `stdpath('state')/inline-completion.yaml`. OpenRouter needs `:InlineCompletionApprove` per project, which writes `.nvim/inline-completion.yaml`. Both migrate from their old `.json` form automatically.
+
 **Additional Keybinds**
 To view all keybinds that are loaded on startup (excluding those registered dynamically), run `nvim --headless -c 'redir! > keymaps.txt | verbose map | redir END' +qall` to output all keybind registrations to both stdout and a file.
 

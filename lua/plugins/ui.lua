@@ -178,7 +178,6 @@ return {
   },
 
   -- cool colorschemes --
-  { 'nyoom-engineering/oxocarbon.nvim' },
   {
     'EdenEast/nightfox.nvim',
     opts = {

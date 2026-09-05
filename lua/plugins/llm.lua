@@ -10,53 +10,47 @@ local function get_hl_color(group, attr, fallback)
 end
 
 return {
-  -- codeium code insertion
   {
-    'Exafunction/codeium.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'hrsh7th/nvim-cmp',
-      'nvim-lualine/lualine.nvim',
-    },
-    config = function()
-      local codeium = require 'codeium'
-      codeium.setup {
-        enable_cmp_source = false,
-        virtual_text = {
-          enabled = true,
-          manual = true,
-          idle_delay = 0,
-          key_bindings = {
-            accept = '<M-l>',
-            accept_word = false,
-            accept_line = false,
-            clear = false,
-            next = '<M-]>',
-            prev = '<M-[>',
-          },
-        },
-      }
-    end,
+    dir = vim.fn.stdpath 'config',
+    name = 'inline-completion',
     event = 'BufEnter',
+    config = function()
+      require('inline_completion').setup()
+    end,
     keys = {
-      -- Complete in normal mode
       {
         '<M-i>',
         function()
-          vim.cmd 'startinsert'
-          vim.defer_fn(require('codeium.virtual_text').complete, 100)
+          if vim.fn.mode():sub(1, 1) ~= 'i' then
+            vim.cmd 'startinsert'
+          end
+          local bufnr = vim.api.nvim_get_current_buf()
+          vim.b[bufnr].inline_completion_manual_triggering = true
+          vim.lsp.inline_completion.enable(true, { bufnr = bufnr })
+          vim.api.nvim_exec_autocmds('CursorMovedI', { buffer = bufnr, modeline = false })
+          vim.b[bufnr].inline_completion_manual_triggering = false
         end,
-        desc = 'Request AI completion',
+        mode = { 'n', 'i' },
+        desc = 'Request inline completion',
       },
-      -- Complete in insert mode
       {
-        '<M-i>',
+        '<leader>ai',
         function()
-          require('codeium.virtual_text').complete()
+          require('inline_completion').menu()
         end,
-        desc = 'Request AI completion',
-        mode = 'i',
+        mode = { 'n' },
+        desc = '[A]I [I]nline completion menu',
       },
+    },
+    cmd = {
+      'InlineCompletion',
+      'InlineCompletionProvider',
+      'InlineCompletionModel',
+      'InlineCompletionStatus',
+      'InlineCompletionLog',
+      'InlineCompletionApprove',
+      'InlineCompletionRevoke',
+      'InlineCompletionSetup',
     },
   },
   {
