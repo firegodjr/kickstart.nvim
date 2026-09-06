@@ -213,7 +213,7 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWrite' }, {
       -- For some reason codelens keeps getting unset, might be theme-specific
       -- So just force the highlight group to a neutral color for now
       vim.api.nvim_set_hl(0, 'LspCodeLens', { fg = '#777777', italic = true })
-      vim.lsp.codelens.refresh()
+      vim.lsp.codelens.enable(true, { bufnr = bufnr })
 
       -- linting
       -- require("lint").try_lint()
