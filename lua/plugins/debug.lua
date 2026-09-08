@@ -217,6 +217,9 @@ return {
         adapters = {
           require 'neotest-vstest',
         },
+        summary = {
+          open = 'botright vsplit | vertical resize 50',
+        },
       }
     end,
     keys = {
@@ -227,9 +230,6 @@ return {
       {
         '<leader>to',
         '<cmd>Neotest output-panel<cr>',
-      },
-      {
-        '<leader>',
       },
       {
         '<leader>td',

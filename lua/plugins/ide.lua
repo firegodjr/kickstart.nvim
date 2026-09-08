@@ -16,11 +16,18 @@ return {
   },
   {
     'hedyhli/outline.nvim',
-    config = function()
-      require('outline').setup {}
-    end,
-    keys = {
-      { '|', ':Outline<cr>', desc = 'Open Outline' },
+    cmd = { 'Outline', 'OutlineOpen', 'OutlineClose' },
+    opts = {
+      outline_window = {
+        position = 'right',
+        width = 50,
+        relative_width = false,
+        focus_on_open = false,
+      },
+      keymaps = {
+        up_and_jump = '<C-p>',
+        down_and_jump = '<C-n>',
+      },
     },
   },
   { 'Bilal2453/luvit-meta', lazy = true },

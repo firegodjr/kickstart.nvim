@@ -40,58 +40,32 @@ return {
   {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',
+    cmd = 'Neotree',
     dependencies = {
       'nvim-lua/plenary.nvim',
       'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
       'MunifTanjim/nui.nvim',
       -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
     },
-    keys = {
-      { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
-    },
     opts = {
+      open_files_do_not_replace_types = {
+        'terminal',
+        'Trouble',
+        'qf',
+        'edgy',
+        'Outline',
+        'neotest-summary',
+      },
       filesystem = {
-        window = {
-          mappings = {
-            ['\\'] = 'close_window',
-          },
-        },
         follow_current_file = {
           enabled = true,
           leave_dirs_open = false,
         },
         bind_to_cwd = false,
       },
-      event_handlers = {
-        -- save layout before opening neotree
-        {
-          event = 'neo_tree_window_before_open',
-          handler = function()
-            -- vim.cmd("set noequalalways")
-            local layout = {}
-            for _, win in ipairs(vim.api.nvim_list_wins()) do
-              layout[win] = {
-                height = vim.api.nvim_win_get_height(win),
-                width = vim.api.nvim_win_get_width(win),
-              }
-            end
-            vim._neotree_layout = layout
-          end,
-        },
-        -- restore layout after closing neotree
-        {
-          event = 'neo_tree_window_after_close',
-          handler = function()
-            if vim._neotree_layout then
-              for win, dims in pairs(vim._neotree_layout) do
-                if vim.api.nvim_win_is_valid(win) then
-                  pcall(vim.api.nvim_win_set_height, win, dims.height)
-                  pcall(vim.api.nvim_win_set_width, win, dims.width)
-                end
-              end
-            end
-          end,
-        },
+      window = {
+        position = 'right',
+        width = 50,
       },
     },
   },
@@ -124,6 +98,7 @@ return {
 
       require('lualine').setup {
         options = {
+          globalstatus = true,
           disabled_filetypes = { 'dap-repl', 'dap-view' },
           component_separators = { left = '', right = '' },
           section_separators = { left = '', right = '' },
