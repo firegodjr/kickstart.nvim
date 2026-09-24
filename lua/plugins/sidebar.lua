@@ -82,12 +82,12 @@ return {
         {
           title = 'Outline',
           ft = OUTLINE_FT,
-          size = { height = 0.25 },
+          size = { height = 0.33 },
         },
         {
           title = 'Tests',
           ft = TESTS_FT,
-          size = { height = 0.25 },
+          size = { height = 0.33 },
         },
       },
     },
