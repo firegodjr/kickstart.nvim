@@ -14,14 +14,23 @@ local function win_with_ft(ft)
   end
 end
 
-local function focus_later(ft)
-  vim.schedule(function()
-    local win = win_with_ft(ft)
+local function reveal_after_render(path)
+  local events = require 'neo-tree.events'
 
-    if win then
+  events.subscribe {
+    event = events.AFTER_RENDER,
+    once = true,
+    handler = function(state)
+      local win = win_with_ft(FILES_FT)
+
+      if not win then
+        return
+      end
+
       pcall(vim.api.nvim_set_current_win, win)
-    end
-  end)
+      require('neo-tree.ui.renderer').focus_node(state, path, true)
+    end,
+  }
 end
 
 -- outline captures its code window when the provider answers, which for LSP is after
@@ -52,11 +61,12 @@ local function toggle_sidebar()
   end
 
   keep_code_win(vim.api.nvim_get_current_win())
+  local path = vim.api.nvim_buf_get_name(0)
 
   vim.cmd 'OutlineOpen'
   vim.cmd 'Neotree reveal position=right source=filesystem'
 
-  focus_later(FILES_FT)
+  reveal_after_render(path)
 end
 
 return {
