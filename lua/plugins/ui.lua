@@ -145,13 +145,13 @@ return {
   },
 
   -- tab-scoped buffers
-  {
-    'tiagovla/scope.nvim',
-    config = function()
-      require('scope').setup {}
-    end,
-  },
-
+  -- {
+  --   'tiagovla/scope.nvim',
+  --   config = function()
+  --     require('scope').setup {}
+  --   end,
+  -- },
+  --
   -- cool colorschemes --
   {
     'EdenEast/nightfox.nvim',
