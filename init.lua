@@ -26,8 +26,8 @@ local MINI_AI_SEARCH_LINES = 500
 require('mini.ai').setup { n_lines = MINI_AI_SEARCH_LINES }
 
 -- [[ Keymaps ]]
-vim.keymap.set('i', 'jk', '<Esc>')
-vim.keymap.set('i', 'kj', '<Esc>')
+-- VS Code handles insert mode, so insert-mode keymaps never reach Neovim.
+-- jk/kj live in the VS Code setting `vscode-neovim.compositeKeys`. See CLAUDE.md.
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 

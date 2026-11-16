@@ -17,7 +17,14 @@ Scope: text editing and keybinds only. VS Code owns windows, panes, the file tre
 ## Key Mappings
 
 - Leader: `<space>`
-- `jk`/`kj` - Exit insert mode
+- `jk`/`kj` - Exit insert mode. VS Code owns insert mode, so `init.lua` cannot map these. They live in VS Code `settings.json`:
+
+  ```json
+  "vscode-neovim.compositeKeys": {
+    "jk": { "command": "vscode-neovim.escape" },
+    "kj": { "command": "vscode-neovim.escape" }
+  }
+  ```
 - `<Esc>` - Clear search highlight
 - `s` - Leap
 - `,,` - Previous editor | `,d` - Close editor
