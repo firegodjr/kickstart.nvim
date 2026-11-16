@@ -1,5 +1,6 @@
 -- Minimal config for the vscode-neovim extension: text editing and keybinds only.
--- VS Code owns windows, panes, the file tree, LSP, formatting and completion.
+-- VS Code owns windows, panes, the file tree, language servers and completion.
+-- LSP keymaps forward to VS Code commands.
 
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -36,13 +37,32 @@ vim.keymap.set({ 'n', 'x', 'o' }, 's', '<Plug>(leap)', { desc = 'Leap' })
 if vim.g.vscode then
   local vscode = require 'vscode'
 
-  vim.keymap.set('n', ',,', function()
-    vscode.action 'workbench.action.openPreviousRecentlyUsedEditor'
-  end, { desc = 'Go to previous buffer' })
+  local function map_vscode_action(mode, lhs, action, desc)
+    vim.keymap.set(mode, lhs, function()
+      vscode.action(action)
+    end, { desc = desc })
+  end
 
-  vim.keymap.set('n', ',d', function()
-    vscode.action 'workbench.action.closeActiveEditor'
-  end, { desc = 'Close current buffer' })
+  map_vscode_action('n', ',,', 'workbench.action.openPreviousRecentlyUsedEditor', 'Go to previous buffer')
+  map_vscode_action('n', ',d', 'workbench.action.closeActiveEditor', 'Close current buffer')
+
+  -- Language features, served by the VS Code language extensions.
+  map_vscode_action('n', 'gd', 'editor.action.revealDefinition', 'LSP: [G]oto [D]efinition')
+  map_vscode_action('n', 'gr', 'editor.action.goToReferences', 'LSP: [G]oto [R]eferences')
+  map_vscode_action('n', 'gI', 'editor.action.goToImplementation', 'LSP: [G]oto [I]mplementation')
+  map_vscode_action('n', 'gD', 'editor.action.revealDeclaration', 'LSP: [G]oto [D]eclaration')
+  map_vscode_action('n', '<leader>ds', 'workbench.action.gotoSymbol', 'LSP: [D]ocument [S]ymbols')
+  map_vscode_action('n', '<leader>ws', 'workbench.action.showAllSymbols', 'LSP: [W]orkspace [S]ymbols')
+  map_vscode_action('n', '<leader>rn', 'editor.action.rename', 'LSP: [R]e[n]ame')
+  map_vscode_action({ 'n', 'x' }, '<leader>ca', 'editor.action.quickFix', 'LSP: [C]ode [A]ction')
+  map_vscode_action('n', '<leader>f', 'editor.action.formatDocument', '[F]ormat buffer')
+  map_vscode_action('x', '<leader>f', 'editor.action.formatSelection', '[F]ormat selection')
+
+  local INLAY_HINTS_SETTING = 'editor.inlayHints.enabled'
+  vim.keymap.set('n', '<leader>th', function()
+    local next_state = vscode.get_config(INLAY_HINTS_SETTING) == 'off' and 'on' or 'off'
+    vscode.update_config(INLAY_HINTS_SETTING, next_state, 'global')
+  end, { desc = 'LSP: [T]oggle Inlay [H]ints' })
 end
 
 -- [[ Autocommands ]]
