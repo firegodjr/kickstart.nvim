@@ -1,8 +1,0 @@
-label: Ollama (VM host)
-kind: openai
-order: 3
-
-endpoint: http://10.0.2.2:11434/v1
-model: qwen2.5-coder:1.5b
-api_key: ollama
-api_format: fim
